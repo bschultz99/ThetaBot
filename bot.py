@@ -22,7 +22,7 @@ def help():
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
-    client.chat_postMessage(channel=channel_id, text=help_message)
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text=help_message)
     return Response(), 200
 
 @app.route('/takedownform', methods=['POST'])
@@ -30,14 +30,39 @@ def takedownform():
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
-    client.chat_postMessage(channel=channel_id, text="Testing", blocks=takedown_form)
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=takedown_form)
     return Response(), 200
+
+@app.route('/cleanupsettings', methods=['POST'])
+def cleanupsettings():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get("channel_id")
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=cleanup_settings_form)
+    return Response(), 200
+
+@app.route('/userform', methods=['POST'])
+def userform():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get("channel_id")
+    print(channel_id)
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=user_form)
+    return Response(), 200
+
+@app.route('/removeuser', methods=['POST'])
+def removeuser():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get("channel_id")
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=remove_user_form)
+    return Response(), 200
+
 
 @app.route('/interactions', methods=['POST'])
 def interactions():
     data = json.loads(request.form.get("payload"))
     action = data["actions"][0]["action_id"]
-
     if action == "actionId-takedownsubmit":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
@@ -67,10 +92,44 @@ def interactions():
                 takedown[8] = 1
             elif day["value"] == "value-FD":
                 takedown[9] = 1
-            
         add_user(conn, user)
         add_takedown(conn, takedown)
+    elif action == "actionId-usersubmit":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        membership = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["text"]["text"]
+        user = (slack_id, name, membership)
+        add_user(conn, user)
+    elif action == "actionId-removesubmit":
+        input_keys = list(data["state"]["values"])
+        slack_id = data["state"]["values"][input_keys[0]]["users_select-action"]["selected_user"]
+        remove_user(conn, slack_id)
+    elif action == "actionId-cleanupsettingssubmit":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        deck = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["value"]
+        townsman = data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"]
+        minimumInHouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
+        minimumPeople = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
+        cleanup = (cleanupName, deck, townsman, minimumInHouse, minimumPeople)
+        add_cleanup(conn, cleanup)
+    elif action == "actionId-cleanupsettingremove":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        remove_cleanup(conn, cleanupName)
+    return Response(), 200
 
+@app.route('/generate-cleanup-database', methods=['POST'])
+def generatecleanupdatabase():
+    generate_cleanups_database(conn)
+    return Response(), 200
+
+@app.route('/generate-cleanups', methods=['POST'])
+def generatecleanups():
+    generate_cleanups(conn)
     return Response(), 200
 
 @app.route('/generate-takedowns', methods=['POST'])
