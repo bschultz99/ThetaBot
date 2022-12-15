@@ -18,51 +18,32 @@ def create_table(con, create_table_sql):
         print(e)
 
 def startup(con):
+    cur = con.cursor()
     create_table(con, users_startup_table)
     create_table(con, cleanupSettings_startup_table)
+    create_table(con, cleanups_startup_table)
+    try: 
+        cur.executescript(cleanups_startup_alter)
+    except Error as e:
+        print(e)
 
-def add_user(conn, user):
-    select_sql = "SELECT * FROM users WHERE slack_id=?"
-    insert_sql = "INSERT INTO users(slack_id, name, membership) VALUES(?,?,?)"
-    update_sql = "UPDATE users SET name = '{}', membership = '{}' WHERE slack_id = '{}'"
-    cur = conn.cursor()
-    cur.execute(select_sql, (user[0],))
-    rows = cur.fetchall()
-    if not rows:
-        cur.execute(insert_sql, user)
-        conn.commit()
+def add_user(con, user):
+    cur = con.cursor()
+    if (cur.execute(users_add_select.format(user[0])).fetchall()):
+        cur.execute(users_add_update.format(user[1],user[2], user[0]))
     else:
-        cur.execute(update_sql.format(user[1],user[2], user[0]))
-        conn.commit()
+        cur.execute(users_add_insert, user)
     #Update/ADD Cleanup Database
-    select_database_sql = "SELECT * FROM cleanups WHERE slack_id =?"
-    insert_database_sql = "INSERT INTO cleanups(slack_id, name, membership) VALUES(?,?,?)"
-    update_database_sql = "UPDATE cleanups SET name = '{}', membership = '{}' WHERE slack_id = '{}'"
-    cur = conn.cursor()
-    cur.execute(select_database_sql, (user[0],))
-    rows = cur.fetchall()
-    if not rows:
-        cur.execute(insert_database_sql, user)
-        conn.commit()
+    if (cur.execute(users_database_select.format(user[0])).fetchall()):
+        cur.execute(users_database_update.format(user[1],user[2], user[0]))
     else:
-        cur.execute(update_database_sql.format(user[1],user[2], user[0]))
-        conn.commit()
-    update_captain_sql = " UPDATE cleanups SET captain = FALSE WHERE membership = 'New Member' AND slack_id = ?;"
-    update_captain_sql2 = "UPDATE cleanups SET captain = TRUE WHERE membership != 'New Member' AND slack_id = ?;"
-    cur.execute(update_captain_sql, (user[0],))
-    conn.commit()
-    cur.execute(update_captain_sql2, (user[0],))
-    conn.commit()
+        cur.execute(users_database_insert, user)
+    con.commit()
+    cur.executescript(users_database_updateCaptain.format(user[0], user[0]))
 
-def remove_user(conn, slack_id):
-    remove_sql = "DELETE FROM users WHERE slack_id = ?"
-    cur = conn.cursor()
-    cur.execute(remove_sql, (slack_id,))
-    conn.commit()
-    remove_database_sql = "DELETE FROM cleanups WHERE slack_id = ?"
-    cur = conn.cursor()
-    cur.execute(remove_database_sql, (slack_id,))
-    conn.commit()
+def remove_user(con, slack_id):
+    cur = con.cursor()
+    cur.executescript(users_remove_delete.format(slack_id, slack_id))
 
 def add_takedown(conn, takedowns):
     select_sql = "SELECT * FROM takedowns WHERE slack_id=?"
@@ -100,9 +81,7 @@ def remove_cleanup(conn, cleanupName):
 
 def generate_cleanups_database(con):
     cur = con.cursor()
-    create_table(con, cleanups_database_table)
     try:
-        cur.executescript(cleanups_database_alter)
         for cleanUp in (cur.execute(cleanups_database_select)).fetchall():
             cur.execute(cleanups_database_alterCleanups.format(cleanUp[0]))
             con.commit()
