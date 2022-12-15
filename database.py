@@ -3,53 +3,23 @@ from sqlite3 import Error
 from datetime import date
 from sql import *
 def create_connection(db_file):
-    conn = None
+    con = None
     try:
-        conn = sqlite3.connect(db_file, check_same_thread=False)
-        return conn
+        con = sqlite3.connect(db_file, check_same_thread=False)
+        return con
     except Error as e:
         print(e)
 
-def create_table(conn, create_table_sql):
+def create_table(con, create_table_sql):
     try:
-        c = conn.cursor()
-        c.execute(create_table_sql)
+        cur = con.cursor()
+        cur.execute(create_table_sql)
     except Error as e:
         print(e)
 
-def startup(conn):
-    user_table_sql = """ CREATE TABLE IF NOT EXISTS users (
-                                        slack_id text PRIMARY KEY,
-                                        name text NOT NULL,
-                                        membership text NOT NULL
-                                    ); """
-    takedowns_table_sql = """ CREATE TABLE IF NOT EXISTS takedowns (
-                                        takedown_id integer PRIMARY KEY,
-                                        monday_lunch text,
-                                        monday_dinner text,
-                                        tuesday_lunch text,
-                                        tuesday_dinner text,
-                                        wednesday_lunch text,
-                                        wednesday_dinner text,
-                                        thursday_lunch text,
-                                        thursday_dinner text,
-                                        friday_lunch text,
-                                        friday_dinner text,
-                                        takedown_count integer,
-                                        break_count integer,
-                                        membership text NOT NULL,
-                                        slack_id integer NOT NULL
-                                    ); """
-    cleanup_settings_sql = """ CREATE TABLE IF NOT EXISTS cleanup_settings (
-                                        cleanup_id text PRIMARY KEY,
-                                        deck_requirement integer NOT NULL,
-                                        townsman_captain boolean NOT NULL,
-                                        minimum_inhouse integer NOT NULL,
-                                        minimum_people integer NOT NULL
-                                    ); """
-    create_table(conn, user_table_sql)
-    create_table(conn, cleanup_settings_sql)
-    create_table(conn, takedowns_table_sql)
+def startup(con):
+    create_table(con, users_startup_table)
+    create_table(con, cleanupSettings_startup_table)
 
 def add_user(conn, user):
     select_sql = "SELECT * FROM users WHERE slack_id=?"
