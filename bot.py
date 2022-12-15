@@ -6,6 +6,7 @@ from flask import Flask, request, Response
 from slackeventsapi import SlackEventAdapter
 from templates import *
 from database import *
+from threading import Thread
 import json
 
 env_path = Path('.') / '.env'
@@ -129,7 +130,7 @@ def generatecleanupdatabase():
 
 @app.route('/generate-cleanups', methods=['POST'])
 def generatecleanups():
-    generate_cleanups(conn)
+    Thread(target=generate_cleanups, args=(conn,)).start()
     return Response(), 200
 
 @app.route('/generate-takedowns', methods=['POST'])

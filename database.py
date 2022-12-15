@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from sqlite3 import Error
 from datetime import date
 def create_connection(db_file):
@@ -191,7 +192,7 @@ def generate_cleanups(conn):
     for cleanup in cleanups:
         if cleanup[1] == 0 and cleanup[2] == 0: #In-House
             select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND membership = "In-House 3" OR membership = "In-House 2"
+                                WHERE captain = 1 AND used = 0 AND (membership = "In-House 3" OR membership = "In-House 2")
                                 ORDER BY "{}" ASC, captainCount ASC
                                 ;'''
         elif cleanup[1] == 2 and cleanup[2] == 0: #In-House 2
@@ -211,12 +212,12 @@ def generate_cleanups(conn):
                                 ;'''
         elif cleanup[1] == 2 and cleanup[2] == 1: #In-House 2 and Townsman
             select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND membership = "In-House 2" OR membership = "Townsman"
+                                WHERE captain = 1 AND used = 0 AND (membership = "In-House 2" OR membership = "Townsman")
                                 ORDER BY "{}" ASC, captainCount ASC
                                 ;'''
         else: # In-House 3 and townsman
             select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND membership = "In-House 3" or membership = "Townsman"
+                                WHERE captain = 1 AND used = 0 AND (membership = "In-House 3" or membership = "Townsman")
                                 ORDER BY "{}" ASC, captainCount ASC
                                 ;'''
         cur.execute(select_captain_sql.format(cleanup[0]))
@@ -232,15 +233,26 @@ def generate_cleanups(conn):
             print("BIG ERROR")
     #Generate Minimum-InHouse
     for cleanup in cleanups:
-        select_cleanup_sql = ''' SELECT slack_id FROM cleanups
-                            WHERE used = 0 AND (membership = "In-House 2" OR membership = "In-House 3")
-                            ORDER BY "{}" ASC
-                            ;'''
+        if cleanup[1] == 0: #In-House 2 and In-House 3
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND (membership = "In-House 2" OR membership = "In-House 3")
+                                ORDER BY "{}" ASC
+                                ;'''
+        elif cleanup[1] == 2 and cleanup[2] == 0: #In-House2
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND membership = "In-House 2"
+                                ORDER BY "{}" ASC
+                                ;'''
+        elif cleanup[1] == 3 and cleanup[2] == 0: #In-House 3
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND membership = "In-House 3"
+                                ORDER BY "{}" ASC
+                                ;'''
         update_inhouse_sql = 'UPDATE cleanups SET "{}" = "{}" + 1 WHERE slack_id = "{}"'
         update_used_sql = 'UPDATE cleanups SET used = 1 WHERE slack_id = "{}"'
         update_weekly_cleanup_sql = 'UPDATE "cleanups_{}" SET cleanup = "{}" WHERE slack_id = "{}"'
         for x in range(cleanup[3]):
-            cur.execute(select_cleanup_sql)
+            cur.execute(select_cleanup_sql.format(cleanup[0]))
             person = cur.fetchone()[0]
             try:
                 cur.execute(update_inhouse_sql.format(cleanup[0], cleanup[0], person))
@@ -249,8 +261,82 @@ def generate_cleanups(conn):
                 conn.commit()
             except Error as e:
                 print(e)
-    #Wrapped up here; I finished adding the minimum cleanup fill amount and captains. Fill the rest of brothers in.
-
+    #Generate Minimum-People
+    for cleanup in cleanups:
+        if cleanup[1] == 0: #Anyone
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0
+                                ORDER BY "{}" ASC
+                                ;'''
+        elif cleanup[1] == 2: #In-House 2 and townsman/new members
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND (membership = "In-House 2" OR membership = "Townsman" OR membership = "New Member")
+                                ORDER BY "{}" ASC
+                                ;'''
+        elif cleanup[1] == 3: #In-House 3 and townsman/new members
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND (membership = "In-House 3" OR membership = "Townsman" OR membership = "New Member")
+                                ORDER BY "{}" ASC
+                                ;'''
+        update_inhouse_sql = 'UPDATE cleanups SET "{}" = "{}" + 1 WHERE slack_id = "{}"'
+        update_used_sql = 'UPDATE cleanups SET used = 1 WHERE slack_id = "{}"'
+        update_weekly_cleanup_sql = 'UPDATE "cleanups_{}" SET cleanup = "{}" WHERE slack_id = "{}"'
+        for x in range(cleanup[4]-(cleanup[3]+1)):
+            cur.execute(select_cleanup_sql.format(cleanup[0]))
+            person = cur.fetchone()[0]
+            try:
+                cur.execute(update_inhouse_sql.format(cleanup[0], cleanup[0], person))
+                cur.execute(update_used_sql.format(person))
+                cur.execute(update_weekly_cleanup_sql.format(today, cleanup[0], person))
+                conn.commit()
+            except Error as e:
+                print(e)
+    #Fill in the Rest
+    rest_cleanup_sql = 'SELECT Count() FROM cleanups WHERE used = 0'
+    cleanups_sql = 'SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC'
+    select_cleanup_sql = ''' SELECT slack_id FROM cleanups
+                            WHERE used = 0 
+                            ORDER BY "{}" ASC
+                            ;'''
+    cur.execute(rest_cleanup_sql)
+    rest = cur.fetchone()[0]
+    cur.execute(cleanups_sql)
+    cleanups = cur.fetchall()
+    cleanupCounter = 0
+    for x in range(rest):
+        cleanup = cleanups[cleanupCounter]
+        if cleanup[1] == 0: #Anyone
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0
+                                ORDER BY "{}" ASC
+                                ;'''
+        elif cleanup[1] == 2: #In-House 2 and townsman/new members
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND (membership = "In-House 2" OR membership = "Townsman" OR membership = "New Member")
+                                ORDER BY "{}" ASC
+                                ;'''
+        elif cleanup[1] == 3: #In-House 3 and townsman/new members
+            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND (membership = "In-House 3" OR membership = "Townsman" OR membership = "New Member")
+                                ORDER BY "{}" ASC
+                                ;'''
+        cur.execute(select_cleanup_sql.format(cleanup[0]))
+        person = cur.fetchone()[0]
+        try:
+            cur.execute(update_inhouse_sql.format(cleanup[0], cleanup[0], person))
+            cur.execute(update_used_sql.format(person))
+            cur.execute(update_weekly_cleanup_sql.format(today, cleanup[0], person))
+            conn.commit()
+            if cleanupCounter+1 == len(cleanups):
+                cleanupCounter = 0
+            else:
+                cleanupCounter += 1
+        except Error as e:
+                print(e)
+    #Reset used column
+    update_used_sql = 'UPDATE cleanups SET used = 0'
+    cur.execute(update_used_sql)
+    conn.commit()
 
 
 def generate_takedown(conn):

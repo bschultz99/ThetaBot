@@ -3,7 +3,7 @@ SELECT slack_id, name, used, captainCount, Kitchen FROM cleanups WHERE captain =
 
 UPDATE cleanups SET used = 0;
 
-DROP TABLE 'cleanups_2022-12-13';
+DROP TABLE 'cleanups_2022-12-14';
 
 DROP TABLE 'cleanups';
 
@@ -32,4 +32,17 @@ SELECT * FROM cleanups
 SELECT slack_id FROM cleanups
                         WHERE used = 0 AND membership = "In-House 2" OR membership = "In-House 3"
                         ORDER BY "Kitchen" ASC
-                        
+SELECT Count() FROM cleanups WHERE used = 0;
+
+SELECT cleanup_id FROM cleanup_settings WHERE deck_requirement = 0 AND townsman_captain = 0;
+
+SELECT * FROM cleanups ORDER BY membership;
+
+SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0
+
+SELECT slack_id FROM cleanups 
+                                WHERE used = 0 AND membership = "New Member"
+                                ORDER BY "Study/Laundry" ASC
+                                ;
+
+SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC;
