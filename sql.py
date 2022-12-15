@@ -43,6 +43,12 @@ users_remove_delete = '''
                         DELETE FROM cleanups WHERE slack_id = "{}";
                         COMMIT;
                       '''
+#Cleanup Settings
+cleanupSettings_add_select = 'SELECT * FROM cleanup_settings WHERE cleanup_id = "{}"'
+cleanupSettings_add_insert = 'INSERT INTO cleanup_settings(cleanup_id, deck_requirement, townsman_captain, minimum_inhouse, minimum_people) VALUES(?,?,?,?,?);'
+cleanupSettings_add_update = 'UPDATE cleanup_settings SET deck_requirement = "{}", townsman_captain = "{}", minimum_inhouse = "{}", minimum_people = "{}" WHERE cleanup_id = "{}";'
+
+cleanupSettings_add_update = ''
 #Generate Cleanups Database
 cleanups_database_select = 'SELECT cleanup_id from cleanup_settings;'
 cleanups_database_alterCleanups = 'ALTER TABLE cleanups ADD COLUMN "{}" integer DEFAULT 0;'

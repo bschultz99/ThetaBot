@@ -45,39 +45,33 @@ def remove_user(con, slack_id):
     cur = con.cursor()
     cur.executescript(users_remove_delete.format(slack_id, slack_id))
 
-def add_takedown(conn, takedowns):
+def add_takedown(con, takedowns):
     select_sql = "SELECT * FROM takedowns WHERE slack_id=?"
     insert_sql = "INSERT INTO takedowns(monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner, membership, slack_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
     update_sql = "UPDATE takedowns SET monday_lunch = ?, monday_dinner = ?, tuesday_lunch = ?, tuesday_dinner = ?, wednesday_lunch = ?, wednesday_dinner = ?, thursday_lunch = ?, thursday_dinner = ?, friday_lunch = ?, friday_dinner = ?, membership = ? WHERE slack_id = ?"
-    cur = conn.cursor()
+    cur = con.cursor()
     cur.execute(select_sql, (takedowns[11],))
     rows = cur.fetchall()
     print(rows)
     if not rows:
         cur.execute(insert_sql, takedowns)
-        conn.commit()
+        con.commit()
     else:
         cur.execute(update_sql, takedowns)
-        conn.commit()
+        con.commit()
 
-def add_cleanup(conn, cleanup_setting):
-    select_sql = "SELECT * FROM cleanup_settings WHERE cleanup_id=?"
-    insert_sql = "INSERT INTO cleanup_settings(cleanup_id,deck_requirement,townsman_captain, minimum_inhouse, minimum_people) VALUES(?,?,?,?,?)"
-    update_sql = "UPDATE cleanup_settings SET deck_requirement = ?, townsman_captain = ?, minimum_inhouse = ?, minimum_people = ? WHERE cleanup_id = ?"
-    cur = conn.cursor()
-    cur.execute(select_sql, (cleanup_setting[0],))
-    rows = cur.fetchall()
-    if not rows:
-        cur.execute(insert_sql, cleanup_setting)
-        conn.commit()
+def add_cleanup(con, cleanup_setting):
+    cur = con.cursor()
+    if (cur.execute(cleanupSettings_add_select.format(cleanup_setting[0])).fetchall()):
+        cur.execute(cleanupSettings_add_update.format(cleanup_setting[1], cleanup_setting[2], cleanup_setting[3], cleanup_setting[4], cleanup_setting[0]))
     else:
-        cur.execute(update_sql, cleanup_setting[1:] + (cleanup_setting[0],))
-        conn.commit()
-def remove_cleanup(conn, cleanupName):
-    remove_sql = "DELETE FROM cleanup_settings WHERE cleanup_id = ?"
-    cur = conn.cursor()
-    cur.execute(remove_sql, (cleanupName,))
-    conn.commit()
+        cur.execute(cleanupSettings_add_insert, cleanup_setting)
+    con.commit()
+
+def remove_cleanup(con, cleanupName):
+    cur = con.cursor()
+    cur.execute(cleanupSettings_remove_delete.format(cleanupName))
+    con.commit()
 
 def generate_cleanups_database(con):
     cur = con.cursor()
