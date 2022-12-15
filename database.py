@@ -1,7 +1,7 @@
 import sqlite3
-import time
 from sqlite3 import Error
 from datetime import date
+from sql import *
 def create_connection(db_file):
     conn = None
     try:
@@ -128,36 +128,16 @@ def remove_cleanup(conn, cleanupName):
     cur.execute(remove_sql, (cleanupName,))
     conn.commit()
 
-def generate_cleanups_database(conn):
-    cleanups_table_sql = """ CREATE TABLE IF NOT EXISTS cleanups AS
-                                    SELECT *
-                                    FROM users
-                                ;"""
-    alter_table_captain_sql = "ALTER TABLE cleanups ADD COLUMN captain boolean DEFAULT TRUE"
-    alter_table_captainCount_sql = "ALTER TABLE cleanups ADD COLUMN captainCount integer DEFAULT 0"
-    alter_cleanups_sql = "ALTER TABLE cleanups ADD COLUMN '{}' integer DEFAULT 0"
-    alter_used_sql = "ALTER TABLE cleanups ADD COLUMN used boolean DEFAULT FALSE"
-    update_sql = " UPDATE cleanups SET captain = FALSE WHERE membership = 'New Member'"
-    select_sql = "SELECT cleanup_id from cleanup_settings"
-    create_table(conn, cleanups_table_sql)
+def generate_cleanups_database(con):
+    cur = con.cursor()
+    create_table(con, cleanups_database_table)
     try:
-        cur = conn.cursor()
-        cur.execute(alter_used_sql)
-        cur.execute(alter_table_captain_sql)
-        cur.execute(alter_table_captainCount_sql)
-        conn.commit()
-    except:
-        print("L") # Insert logging down the line I guess
-    cur.execute(select_sql)
-    rows = cur.fetchall()
-    try:
-        for x in rows:
-            cur.execute(alter_cleanups_sql.format(x[0]))
-            conn.commit()
-    except:
-        print("L*2") # Insert logging down the line I guess
-    cur.execute(update_sql)
-    conn.commit()
+        cur.executescript(cleanups_database_alter)
+        for cleanUp in (cur.execute(cleanups_database_select)).fetchall():
+            cur.execute(cleanups_database_alterCleanups.format(cleanUp[0]))
+            con.commit()
+    except Error as e:
+        print(e)
 
 def generate_cleanups(conn):
     today = date.today()
