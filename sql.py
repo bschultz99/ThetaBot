@@ -44,11 +44,50 @@ users_remove_delete = '''
                         COMMIT;
                       '''
 #Cleanup Settings
-cleanupSettings_add_select = 'SELECT * FROM cleanup_settings WHERE cleanup_id = "{}"'
+cleanupSettings_add_select = 'SELECT * FROM cleanup_settings WHERE cleanup_id = "{}";'
 cleanupSettings_add_insert = 'INSERT INTO cleanup_settings(cleanup_id, deck_requirement, townsman_captain, minimum_inhouse, minimum_people) VALUES(?,?,?,?,?);'
 cleanupSettings_add_update = 'UPDATE cleanup_settings SET deck_requirement = "{}", townsman_captain = "{}", minimum_inhouse = "{}", minimum_people = "{}" WHERE cleanup_id = "{}";'
-
-cleanupSettings_add_update = ''
+cleanupSettings_remove_delete = 'DELETE FROM cleanup_settings WHERE cleanup_ID = "{}";'
 #Generate Cleanups Database
 cleanups_database_select = 'SELECT cleanup_id from cleanup_settings;'
 cleanups_database_alterCleanups = 'ALTER TABLE cleanups ADD COLUMN "{}" integer DEFAULT 0;'
+#Generate Cleanups
+cleanups_generate_table = 'CREATE TABLE IF NOT EXISTS "cleanups_{}" AS SELECT slack_id, name FROM users;'
+cleanups_generate_alter = '''
+                            BEGIN;
+                            ALTER TABLE "cleanups_{}" ADD COLUMN captain DEFAULT 0;
+                            ALTER TABLE "cleanups_{}" ADD COLUMN cleanup DEFAULT NULL;
+                            COMMIT;
+                          '''
+cleanups_generate_select = 'SELECT * FROM cleanup_settings ORDER BY townsman_captain, deck_requirement;'
+cleanups_generate_captainUpdate = '''
+                             BEGIN;
+                             UPDATE cleanups SET captainCount = captainCount + 1 WHERE slack_id = "{}";
+                             UPDATE cleanups SET "{}" = "{}" + 1 WHERE slack_id = "{}";
+                             UPDATE cleanups SET used = 1 WHERE slack_ID = "{}";
+                             UPDATE "cleanups_{}" SET captain = 1 WHERE slack_ID = "{}";
+                             UPDATE "cleanups_{}" SET cleanup = "{}" WHERE slack_id = "{}";
+                             COMMIT;
+                           '''
+cleanups_generate_selectCaptainInHouse = 'SELECT slack_id FROM cleanups WHERE captain = 1 AND used = 0 AND (membership = "In-House 3" OR membership = "In-House 2") ORDER BY "{}" ASC, captainCount ASC;'
+cleanups_generate_selectCaptainInHouse2 = 'SELECT slack_id FROM cleanups WHERE captain = 1 AND used = 0 AND membership = "In-House 2" ORDER BY "{}" ASC, captainCount ASC;'
+cleanups_generate_selectCaptainInHouse3 = 'SELECT slack_id FROM cleanups WHERE captain = 1 AND used = 0 AND membership = "In-House 3" ORDER BY "{}" ASC, captainCount ASC;'
+cleanups_generate_selectCaptainAll = 'SELECT slack_id FROM cleanups WHERE captain = 1 AND used = 0 ORDER BY "{}" ASC, captainCount ASC;'
+cleanups_generate_selectCaptainInHouse2Townsman = 'SELECT slack_id FROM cleanups WHERE captain = 1 AND used = 0 AND (membership = "In-House 2" OR membership = "Townsman") ORDER BY "{}" ASC, captainCount ASC;'
+cleanups_generate_selectCaptainInHouse3Townsman = 'SELECT slack_id FROM cleanups WHERE captain = 1 AND used = 0 AND (membership = "In-House 3" OR membership = "Townsman") ORDER BY "{}" ASC, captainCount ASC;'
+cleanups_generate_selectMinInHouse = 'SELECT slack_id FROM cleanups WHERE used = 0 AND (membership = "In-House 2" OR membership = "In-House 3") ORDER BY "{}" ASC;'
+cleanups_generate_selectMinInHouse2 = 'SELECT slack_id FROM cleanups WHERE used = 0 AND membership = "In-House 2" ORDER BY "{}" ASC;'
+cleanups_generate_selectMinInHouse3 = 'SELECT slack_id FROM cleanups WHERE used = 0 AND membership = "In-House 3" ORDER BY "{}" ASC;'
+cleanups_generate_update = '''
+                                BEGIN;
+                                UPDATE cleanups SET "{}" = "{}" + 1 WHERE slack_id = "{}";
+                                UPDATE cleanups SET used = 1 WHERE slack_id = "{}";
+                                UPDATE "cleanups_{}" SET cleanup = "{}" WHERE slack_id = "{}";
+                                COMMIT;
+                              '''
+cleanups_generate_selectAll = 'SELECT slack_id FROM cleanups WHERE used = 0 ORDER BY "{}" ASC;'
+cleanups_generate_selectPeople2 = 'SELECT slack_id FROM cleanups WHERE used = 0 AND (membership = "In-House 2" OR membership = "Townsman" OR membership = "New Member") ORDER BY "{}" ASC;'
+cleanups_generate_selectPeople3 = 'SELECT slack_id FROM cleanups WHERE used = 0 AND (membership = "In-House 3" OR membership = "Townsman" OR membership = "New Member") ORDER BY "{}" ASC;'
+cleanups_generate_selectCount = 'SELECT count() FROM cleanups WHERE used = 0;'
+cleanups_generate_selectCleanup = 'SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC;'
+cleanups_generate_updateUsed = 'UPDATE cleanups SET used = 0'

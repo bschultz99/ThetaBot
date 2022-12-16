@@ -76,190 +76,83 @@ def remove_cleanup(con, cleanupName):
 def generate_cleanups_database(con):
     cur = con.cursor()
     try:
-        for cleanUp in (cur.execute(cleanups_database_select)).fetchall():
-            cur.execute(cleanups_database_alterCleanups.format(cleanUp[0]))
+        for cleanup in (cur.execute(cleanups_database_select)).fetchall():
+            cur.execute(cleanups_database_alterCleanups.format(cleanup[0]))
             con.commit()
     except Error as e:
         print(e)
 
-def generate_cleanups(conn):
+def generate_cleanups(con):
     today = date.today()
-    cleanups_table_sql = f""" CREATE TABLE IF NOT EXISTS 'cleanups_{today}' AS
-                                    SELECT slack_id, name
-                                    FROM users
-                                ;""" 
-    alter_cleanups_sql = f"ALTER TABLE 'cleanups_{today}' ADD COLUMN captain DEFAULT 0"
-    alter_cleanups_2_sql = f"ALTER TABLE 'cleanups_{today}' ADD COLUMN cleanup DEFAULT NULL"
-    create_table(conn, cleanups_table_sql)
+    cur = con.cursor()
+    create_table(con, cleanups_generate_table.format(today))
     try:
-        cur = conn.cursor()
-        cur.execute(alter_cleanups_sql)
-        cur.execute(alter_cleanups_2_sql)
-        conn.commit()
-    except:
-        print("Fuckity remove this later as the table shouldn't double generate I hope")
-    #Retrieve List of cleanups
-    select_cleanups_sql = "SELECT * FROM cleanup_settings ORDER BY townsman_captain, deck_requirement"
-    cur = conn.cursor()
-    cur.execute(select_cleanups_sql)
-    cleanups = cur.fetchall()
-    #Captain Selection
-    #GO BACK AND UPDATE ' INTO "
-    update_captain_sql = "UPDATE cleanups SET captainCount = captainCount + 1 WHERE slack_id = '{}'"
-    update_captain2_sql = 'UPDATE cleanups SET "{}" = "{}" + 1 WHERE slack_id = "{}"'
-    update_used_sql = 'UPDATE cleanups SET used = 1 WHERE slack_id = "{}"'
-    update_weekly_captain_sql = 'UPDATE "cleanups_{}" SET captain = 1 WHERE slack_id = "{}"'
-    update_weekly_cleanup_sql = 'UPDATE "cleanups_{}" SET cleanup = "{}" WHERE slack_id = "{}"'
-    cur = conn.cursor()
-    #FOR LOOP THIS SHIT WITH ALL CLEANUPS
-    for cleanup in cleanups:
-        if cleanup[1] == 0 and cleanup[2] == 0: #In-House
-            select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND (membership = "In-House 3" OR membership = "In-House 2")
-                                ORDER BY "{}" ASC, captainCount ASC
-                                ;'''
-        elif cleanup[1] == 2 and cleanup[2] == 0: #In-House 2
-            select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND membership = "In-House 2"
-                                ORDER BY "{}" ASC, captainCount ASC
-                                ;'''
-        elif cleanup[1] == 3 and cleanup[2] == 0: #In-House 3
-            select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND membership = "In-House 3"
-                                ORDER BY "{}" ASC, captainCount ASC
-                                ;'''
-        elif cleanup[1] == 0 and cleanup[2] == 1: #In-House and Townsman
-            select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0
-                                ORDER BY "{}" ASC, captainCount ASC
-                                ;'''
-        elif cleanup[1] == 2 and cleanup[2] == 1: #In-House 2 and Townsman
-            select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND (membership = "In-House 2" OR membership = "Townsman")
-                                ORDER BY "{}" ASC, captainCount ASC
-                                ;'''
-        else: # In-House 3 and townsman
-            select_captain_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE captain = 1 AND used = 0 AND (membership = "In-House 3" or membership = "Townsman")
-                                ORDER BY "{}" ASC, captainCount ASC
-                                ;'''
-        cur.execute(select_captain_sql.format(cleanup[0]))
-        captain = cur.fetchone()[0]
+        cur.executescript(cleanups_generate_alter.format(today, today))
+    except Error as e:
+        print(e)
+    for cleanup in (cur.execute(cleanups_generate_select)).fetchall():
+        if cleanup[1] == 0 and cleanup[2] == 0:
+            captain = (cur.execute(cleanups_generate_selectCaptainInHouse.format(cleanup[0]))).fetchone()[0]
+        elif cleanup[1] == 2 and cleanup[2] == 0: 
+            captain = (cur.execute(cleanups_generate_selectCaptainInHouse2.format(cleanup[0]))).fetchone()[0]
+        elif cleanup[1] == 3 and cleanup[2] == 0:
+            captain = (cur.execute(cleanups_generate_selectCaptainInHouse3.format(cleanup[0]))).fetchone()[0]
+        elif cleanup[1] == 0 and cleanup[2] == 1:
+            captain = (cur.execute(cleanups_generate_selectCaptainAll.format(cleanup[0]))).fetchone()[0]
+        elif cleanup[1] == 2 and cleanup[2] == 1: 
+            captain = (cur.execute(cleanups_generate_selectCaptainInHouse2Townsman.format(cleanup[0]))).fetchone()[0]
+        else:
+            captain = (cur.execute(cleanups_generate_selectCaptainInHouse3Townsman.format(cleanup[0]))).fetchone()[0]
         try:
-            cur.execute(update_captain_sql.format(captain))
-            cur.execute(update_captain2_sql.format(cleanup[0], cleanup[0], captain))
-            cur.execute(update_used_sql.format(captain))
-            cur.execute(update_weekly_captain_sql.format(today, captain))
-            cur.execute(update_weekly_cleanup_sql.format(today, cleanup[0], captain))
-            conn.commit()
-        except:
-            print("BIG ERROR")
-    #Generate Minimum-InHouse
-    for cleanup in cleanups:
-        if cleanup[1] == 0: #In-House 2 and In-House 3
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0 AND (membership = "In-House 2" OR membership = "In-House 3")
-                                ORDER BY "{}" ASC
-                                ;'''
-        elif cleanup[1] == 2 and cleanup[2] == 0: #In-House2
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0 AND membership = "In-House 2"
-                                ORDER BY "{}" ASC
-                                ;'''
-        elif cleanup[1] == 3 and cleanup[2] == 0: #In-House 3
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0 AND membership = "In-House 3"
-                                ORDER BY "{}" ASC
-                                ;'''
-        update_inhouse_sql = 'UPDATE cleanups SET "{}" = "{}" + 1 WHERE slack_id = "{}"'
-        update_used_sql = 'UPDATE cleanups SET used = 1 WHERE slack_id = "{}"'
-        update_weekly_cleanup_sql = 'UPDATE "cleanups_{}" SET cleanup = "{}" WHERE slack_id = "{}"'
-        for x in range(cleanup[3]):
-            cur.execute(select_cleanup_sql.format(cleanup[0]))
-            person = cur.fetchone()[0]
+            cur.executescript(cleanups_generate_captainUpdate.format(captain, cleanup[0], cleanup[0], captain, captain, today, captain, today, cleanup[0], captain))
+        except Error as e:
+            print(e)
+    for cleanup in (cur.execute(cleanups_generate_select)).fetchall():
+        if cleanup[1] == 0:
+            select = cleanups_generate_selectMinInHouse
+        elif cleanup[1] == 2:
+            select = cleanups_generate_selectMinInHouse2
+        elif cleanup[1] == 3:
+            select = cleanups_generate_selectMinInHouse3
+        for _ in range(cleanup[3]):
+            person = (cur.execute(select.format(cleanup[0]))).fetchone()[0]
             try:
-                cur.execute(update_inhouse_sql.format(cleanup[0], cleanup[0], person))
-                cur.execute(update_used_sql.format(person))
-                cur.execute(update_weekly_cleanup_sql.format(today, cleanup[0], person))
-                conn.commit()
+                cur.executescript(cleanups_generate_update.format(cleanup[0], cleanup[0], person, person, today, cleanup[0], person))
             except Error as e:
                 print(e)
-    #Generate Minimum-People
-    for cleanup in cleanups:
-        if cleanup[1] == 0: #Anyone
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0
-                                ORDER BY "{}" ASC
-                                ;'''
-        elif cleanup[1] == 2: #In-House 2 and townsman/new members
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0 AND (membership = "In-House 2" OR membership = "Townsman" OR membership = "New Member")
-                                ORDER BY "{}" ASC
-                                ;'''
-        elif cleanup[1] == 3: #In-House 3 and townsman/new members
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0 AND (membership = "In-House 3" OR membership = "Townsman" OR membership = "New Member")
-                                ORDER BY "{}" ASC
-                                ;'''
-        update_inhouse_sql = 'UPDATE cleanups SET "{}" = "{}" + 1 WHERE slack_id = "{}"'
-        update_used_sql = 'UPDATE cleanups SET used = 1 WHERE slack_id = "{}"'
-        update_weekly_cleanup_sql = 'UPDATE "cleanups_{}" SET cleanup = "{}" WHERE slack_id = "{}"'
-        for x in range(cleanup[4]-(cleanup[3]+1)):
-            cur.execute(select_cleanup_sql.format(cleanup[0]))
-            person = cur.fetchone()[0]
+    for cleanup in (cur.execute(cleanups_generate_select)).fetchall():
+        if cleanup[1] == 0: 
+            select = cleanups_generate_selectAll
+        elif cleanup[1] == 2: 
+            select = cleanups_generate_selectPeople2
+        elif cleanup[1] == 3: 
+            select = cleanups_generate_selectPeople3
+        for _ in range(cleanup[4]-(cleanup[3]+1)):
+            person = (cur.execute(select.format(cleanup[0]))).fetchone()[0]
             try:
-                cur.execute(update_inhouse_sql.format(cleanup[0], cleanup[0], person))
-                cur.execute(update_used_sql.format(person))
-                cur.execute(update_weekly_cleanup_sql.format(today, cleanup[0], person))
-                conn.commit()
+                cur.executescript(cleanups_generate_update.format(cleanup[0], cleanup[0], person, person, today, cleanup[0], person))
             except Error as e:
                 print(e)
-    #Fill in the Rest
-    rest_cleanup_sql = 'SELECT Count() FROM cleanups WHERE used = 0'
-    cleanups_sql = 'SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC'
-    select_cleanup_sql = ''' SELECT slack_id FROM cleanups
-                            WHERE used = 0 
-                            ORDER BY "{}" ASC
-                            ;'''
-    cur.execute(rest_cleanup_sql)
-    rest = cur.fetchone()[0]
-    cur.execute(cleanups_sql)
-    cleanups = cur.fetchall()
+    cleanups = (cur.execute(cleanups_generate_selectCleanup)).fetchall()
     cleanupCounter = 0
-    for x in range(rest):
+    for _ in range((cur.execute(cleanups_generate_selectCount)).fetchone()[0]):
         cleanup = cleanups[cleanupCounter]
-        if cleanup[1] == 0: #Anyone
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0
-                                ORDER BY "{}" ASC
-                                ;'''
-        elif cleanup[1] == 2: #In-House 2 and townsman/new members
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0 AND (membership = "In-House 2" OR membership = "Townsman" OR membership = "New Member")
-                                ORDER BY "{}" ASC
-                                ;'''
-        elif cleanup[1] == 3: #In-House 3 and townsman/new members
-            select_cleanup_sql = ''' SELECT slack_id FROM cleanups 
-                                WHERE used = 0 AND (membership = "In-House 3" OR membership = "Townsman" OR membership = "New Member")
-                                ORDER BY "{}" ASC
-                                ;'''
-        cur.execute(select_cleanup_sql.format(cleanup[0]))
-        person = cur.fetchone()[0]
+        if cleanup[1] == 0:
+            person = (cur.execute(cleanups_generate_selectAll.format(cleanup[0]))).fetchone()[0]
+        elif cleanup[1] == 2:
+            person = (cur.execute(cleanups_generate_selectPeople2.format(cleanup[0]))).fetchone()[0]
+        elif cleanup[1] == 3: 
+            person = (cur.execute(cleanups_generate_selectPeople2.format(cleanup[0]))).fetchone()[0]
         try:
-            cur.execute(update_inhouse_sql.format(cleanup[0], cleanup[0], person))
-            cur.execute(update_used_sql.format(person))
-            cur.execute(update_weekly_cleanup_sql.format(today, cleanup[0], person))
-            conn.commit()
+            cur.executescript(cleanups_generate_update.format(cleanup[0], cleanup[0], person, person, today, cleanup[0], person))
             if cleanupCounter+1 == len(cleanups):
                 cleanupCounter = 0
             else:
                 cleanupCounter += 1
         except Error as e:
                 print(e)
-    #Reset used column
-    update_used_sql = 'UPDATE cleanups SET used = 0'
-    cur.execute(update_used_sql)
-    conn.commit()
+    cur.execute(cleanups_generate_updateUsed)
+    con.commit()
 
 
 def generate_takedown(conn):

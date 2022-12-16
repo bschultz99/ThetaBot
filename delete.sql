@@ -1,17 +1,12 @@
 -- SQLite
 SELECT slack_id, name, used, captainCount, Kitchen FROM cleanups WHERE captain = 1 AND used = 0 ORDER BY Kitchen ASC, captainCount ASC;
 
-UPDATE cleanups SET used = 0;
-
-DROP TABLE 'cleanups_2022-12-14';
+DROP TABLE 'cleanups_2022-12-16';
 
 DROP TABLE 'cleanups';
 
 SELECT cleanup_id FROM cleanup_settings;
 
-UPDATE cleanups SET "1 Deck" = "1 Deck" + 1 WHERE slack_id = "UCQMZA22E"
-
-UPDATE cleanups SET used = used + 1 WHERE slack_id = 'UCQMZA22E'
 
 PRAGMA table_info(cleanups)
 
@@ -21,7 +16,6 @@ SELECT name, membership, slack_id FROM cleanups
     WHERE captain = 1 AND used = 0 AND membership = "In-House 3" OR membership = "In-House 2"
     ORDER BY Kitchen ASC, captainCount ASC;
 
-UPDATE cleanups SET captain = 0 WHERE name = "Jason"
 
 SELECT * FROM cleanups WHERE used = 0;
 
