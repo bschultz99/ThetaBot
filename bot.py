@@ -7,6 +7,15 @@ from slackeventsapi import SlackEventAdapter
 from templates import *
 from database import *
 from threading import Thread
+import aspose.words as aw
+import subprocess
+import pandoc
+import markdown
+from pylatex import Document, LongTable, MultiColumn
+import pandas as pd
+import weasyprint
+import pdfkit as pdf
+import sqlite3
 import json
 
 env_path = Path('.') / '.env'
@@ -136,6 +145,27 @@ def generatecleanups():
 def generatetakedowns():
     status = generate_takedown(conn)
     print(status)
+    return Response(), 200
+
+@app.route('/test', methods=['POST'])
+def test():
+    file = "./please.pdf"
+    #pandoc.write("data.md", file="doc.pdf")
+    #subprocess.call(["pandoc", "data.txt", "--pdf-engine=xelatex", "-o", "article2.pdf"], shell=True)
+    #doc = aw.Document("./data.md")
+    #doc.save("./output.pdf")
+    #data = client.conversations_create(name="testchannel10", is_private = True)
+    #client.conversations_invite(channel=data["channel"]["id"], users=("UCQMZA62E"))
+    #cid = data["channel"]["id"]
+    df = pd.read_sql_query('SELECT name, captain, cleanup FROM "cleanups_2022-12-16" ORDER BY cleanup, captain DESC;', conn)
+    df.to_html('./query.html')
+    file = './please.pdf'
+    
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get("channel_id")
+    
+    client.files_upload(channels=channel_id, inital_comment="Gabba Gool", file=file)
     return Response(), 200
 
 

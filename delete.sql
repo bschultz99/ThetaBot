@@ -40,3 +40,5 @@ SELECT slack_id FROM cleanups
                                 ;
 
 SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC;
+
+SELECT name, captain, cleanup FROM "cleanups_2022-12-16" ORDER BY cleanup, captain DESC;
