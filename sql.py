@@ -91,3 +91,4 @@ cleanups_generate_selectPeople3 = 'SELECT slack_id FROM cleanups WHERE used = 0 
 cleanups_generate_selectCount = 'SELECT count() FROM cleanups WHERE used = 0;'
 cleanups_generate_selectCleanup = 'SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC;'
 cleanups_generate_updateUsed = 'UPDATE cleanups SET used = 0'
+cleanups_generate_selectOutput = 'SELECT name, captain, cleanup FROM "cleanups_{}" ORDER BY cleanup, captain DESC;'

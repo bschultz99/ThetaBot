@@ -2,6 +2,8 @@ import sqlite3
 from sqlite3 import Error
 from datetime import date
 from sql import *
+from display import *
+
 def create_connection(db_file):
     con = None
     try:
@@ -82,7 +84,7 @@ def generate_cleanups_database(con):
     except Error as e:
         print(e)
 
-def generate_cleanups(con):
+def generate_cleanups(con, channel_id, client):
     today = date.today()
     cur = con.cursor()
     create_table(con, cleanups_generate_table.format(today))
@@ -153,6 +155,7 @@ def generate_cleanups(con):
                 print(e)
     cur.execute(cleanups_generate_updateUsed)
     con.commit()
+    cleanup_weekly(cleanups_generate_selectOutput.format(today), con, channel_id, client)
 
 
 def generate_takedown(conn):

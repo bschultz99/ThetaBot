@@ -1,7 +1,7 @@
 -- SQLite
 SELECT slack_id, name, used, captainCount, Kitchen FROM cleanups WHERE captain = 1 AND used = 0 ORDER BY Kitchen ASC, captainCount ASC;
 
-DROP TABLE 'cleanups_2022-12-16';
+DROP TABLE 'cleanups_2022-12-22';
 
 DROP TABLE 'cleanups';
 
@@ -42,3 +42,5 @@ SELECT slack_id FROM cleanups
 SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC;
 
 SELECT name, captain, cleanup FROM "cleanups_2022-12-16" ORDER BY cleanup, captain DESC;
+
+select name FROM users;
