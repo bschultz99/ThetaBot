@@ -1,9 +1,15 @@
 -- SQLite
 SELECT slack_id, name, used, captainCount, Kitchen FROM cleanups WHERE captain = 1 AND used = 0 ORDER BY Kitchen ASC, captainCount ASC;
 
-DROP TABLE 'cleanups_2022-12-22';
+DROP TABLE 'cleanups_2023-01-07';
 
 DROP TABLE 'cleanups';
+
+UPDATE 'cleanup_settings' SET minimum_inhouse = 1 WHERE cleanup_id = '1 Deck';
+
+DELETE FROM users WHERE name = "Austin";
+
+SELECT * FROM cleanup_settings ORDER BY townsman_captain, deck_requirement;
 
 SELECT cleanup_id FROM cleanup_settings;
 
