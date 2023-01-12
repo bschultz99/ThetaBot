@@ -8,6 +8,11 @@ def cleanup_weekly(query, con, channel_id, client):
     weasyprint.HTML('./reports/weekly_out.html').write_pdf('./reports/weekly_cleanups.pdf')
     client.files_upload(channels=channel_id, inital_comment="Gabba Gool", file='./reports/weekly_cleanups.pdf')
 
+def takedown_weekly(query, con, channel_id, client):
+    df = pd.read_sql_query(query, con)
+    to_html_pretty(df, filename='./reports/weekly_takedown_out.html', title='Takedowns')
+    weasyprint.HTML('./reports/weekly_takedown_out.html').write_pdf('./reports/weekly_takedowns.pdf')
+    client.files_upload(channels=channel_id, inital_comment="Gabba Gool", file='./reports/weekly_takedowns.pdf')
 def to_html_pretty(df, filename, title=''):
     ht = ''
     if title != '':

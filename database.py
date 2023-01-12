@@ -24,8 +24,13 @@ def startup(con):
     create_table(con, users_startup_table)
     create_table(con, cleanupSettings_startup_table)
     create_table(con, cleanups_startup_table)
+    create_table(con, takedowns_startup_table)
     try: 
         cur.executescript(cleanups_startup_alter)
+    except Error as e:
+        print(e)
+    try:
+        cur.executescript(takedowns_startup_alter)
     except Error as e:
         print(e)
 
@@ -54,7 +59,7 @@ def add_takedown(con, takedowns):
     cur = con.cursor()
     cur.execute(select_sql, (takedowns[11],))
     rows = cur.fetchall()
-    print(rows)
+    #print(rows)
     if not rows:
         cur.execute(insert_sql, takedowns)
         con.commit()
@@ -158,32 +163,57 @@ def generate_cleanups(con, channel_id, client):
     cleanup_weekly(cleanups_generate_selectOutput.format(today), con, channel_id, client)
 
 
-def generate_takedown(conn):
+def generate_takedown(con, channel_id, client):
     today = date.today()
-    takedowns_table_sql = f""" CREATE TABLE IF NOT EXISTS [{today}] (
-                                        slots integer,
-                                        monday_lunch text,
-                                        monday_dinner text,
-                                        tuesday_lunch text,
-                                        tuesday_dinner text,
-                                        wednesday_lunch text,
-                                        wednesday_dinner text,
-                                        thursday_lunch text,
-                                        thursday_dinner text,
-                                        friday_lunch text,
-                                        friday_dinner text
-                                    ); """
-    create_table(conn, takedowns_table_sql)
-    select_sql = "SELECT SUM(monday_lunch), SUM(monday_dinner), SUM(tuesday_lunch), SUM(tuesday_dinner), SUM(wednesday_lunch), SUM(wednesday_dinner), SUM(thursday_lunch), SUM(thursday_dinner), SUM(friday_lunch), SUM(friday_dinner) from takedowns"
-    select_sql_new = "SELECT SUM(monday_lunch), SUM(monday_dinner), SUM(tuesday_lunch), SUM(tuesday_dinner), SUM(wednesday_lunch), SUM(wednesday_dinner), SUM(thursday_lunch), SUM(thursday_dinner), SUM(friday_lunch), SUM(friday_dinner) from takedowns where membership = 'New Member'"
-    cur = conn.cursor()
-    cur.execute(select_sql)
-    sum = cur.fetchall()
-    cur = conn.cursor()
-    cur.execute(select_sql_new)
-    new = cur.fetchall()
+    cur = con.cursor()
+    create_table(con, takedowns_generate_table.format(today))
+    try:
+        cur.executescript(takedowns_generate_alter.format(today))
+    except Error as e:
+        print(e)
+    sum = list((cur.execute(takedowns_generate_sum).fetchall())[0])
+    slots = ('monday_lunch', 'monday_dinner', 'tuesday_lunch', 'tuesday_dinner', 'wednesday_lunch', 'wednesday_dinner', 'thursday_lunch', 'thursday_dinner', 'friday_lunch', 'friday_dinner')
+    positions = [0,0,0,0,0,0,0,0,0,0]
+    for _ in range(10):
+        position = smallest(sum, positions)
+        people = cur.execute(takedowns_generate_minimum.format(slots[position])).fetchall()
+        try:
+            sum = tuple(x-y for x, y in zip(sum, people[0][5:]))
+        except IndexError:
+            cur.executescript(takedowns_generate_error.format(today))
+            return sum
+        positions[position] = 1
+        cur.executescript(takedowns_generate_update.format(people[0][0], people[0][0], today, slots[position], people[0][0]))
+    positions = [0,0,0,0,0,0,0,0,0,0]
+    for _ in range(10):
+        position = smallest(sum, positions)
+        people = cur.execute(takedowns_generate_fill.format(slots[position])).fetchall()
+        try:
+            sum = tuple(x-y for x, y in zip(sum, people[0][5:]))
+        except IndexError:
+            cur.executescript(takedowns_generate_error.format(today))
+            return sum
+        cur.executescript(takedowns_generate_update.format(people[0][0], people[0][0], today, slots[position], people[0][0]))
+        try:
+            sum = tuple(x-y for x, y in zip(sum, people[1][5:]))
+        except IndexError:
+            cur.executescript(takedowns_generate_error.format(today))
+            return sum
+        cur.executescript(takedowns_generate_update.format(people[1][0], people[1][0], today, slots[position], people[1][0]))
+        positions[position] = 1
+    takedown_break = cur.execute(takedowns_generate_remaining).fetchall()
+    for i in range(len(takedown_break)):
+        cur.executescript(takedowns_generate_break.format(today, takedown_break[i]))
+    cur.execute(takedowns_generate_updateUsed)
+    con.commit()
+    takedown_weekly(takedowns_generate_selectOutput.format(today), con, channel_id, client)
+        
 
-    for x in range(10):
-        if (sum[0][x]-new[0][x] < 5):
-            return False
-
+def smallest(sum, positions):
+    smallest = 1000000
+    position = 0
+    for i in range(len(sum)):
+        if(smallest > sum[i] and positions[i] == 0):
+            smallest = sum[i]
+            position = i
+    return position

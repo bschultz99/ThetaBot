@@ -3,11 +3,15 @@ SELECT slack_id, name, used, captainCount, Kitchen FROM cleanups WHERE captain =
 
 DROP TABLE 'cleanups_2023-01-07';
 
-DROP TABLE 'cleanups';
+DROP TABLE 'takedowns';
+
+ALTER TABLE 'takedowns' DROP 'break_count';
+
+SELECT SUM(monday_lunch), SUM(monday_dinner), SUM(tuesday_lunch), SUM(tuesday_dinner), SUM(wednesday_lunch), SUM(wednesday_dinner), SUM(thursday_lunch), SUM(thursday_dinner), SUM(friday_lunch), SUM(friday_dinner) FROM "takedowns";
 
 UPDATE 'cleanup_settings' SET minimum_inhouse = 1 WHERE cleanup_id = '1 Deck';
 
-DELETE FROM users WHERE name = "Austin";
+DELETE FROM cleanups WHERE name = "Andrew";
 
 SELECT * FROM cleanup_settings ORDER BY townsman_captain, deck_requirement;
 
@@ -50,3 +54,9 @@ SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain
 SELECT name, captain, cleanup FROM "cleanups_2022-12-16" ORDER BY cleanup, captain DESC;
 
 select name FROM users;
+
+SELECT * FROM "takedowns_2023-01-12" ORDER BY assignment ASC;
+
+UPDATE takedowns SET takedown_count = 0;
+UPDATE takedowns SET used = 0;
+UPDATE "takedowns_2023-01-12" SET assignment = "NULL";

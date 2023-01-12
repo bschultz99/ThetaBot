@@ -24,6 +24,23 @@ cleanups_startup_alter = '''
                            UPDATE cleanups SET captain = FALSE WHERE membership = "New Member";
                            COMMIT;
                          '''
+takedowns_startup_table = 'CREATE TABLE IF NOT EXISTS takedowns AS SELECT * FROM users;'
+takedowns_startup_alter = '''
+                            BEGIN;
+                            ALTER TABLE takedowns ADD COLUMN used boolean DEFAULT FALSE;
+                            ALTER TABLE takedowns ADD COLUMN takedown_count integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN monday_lunch integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN monday_dinner integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN tuesday_lunch integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN tuesday_dinner integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN wednesday_lunch integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN wednesday_dinner integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN thursday_lunch integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN thursday_dinner integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN friday_lunch integer DEFAULT 0;
+                            ALTER TABLE takedowns ADD COLUMN friday_dinner integer DEFAULT 0;
+                            COMMIT;
+                          '''
 #User
 users_add_select = 'SELECT slack_id FROM users WHERE slack_id = "{}";'
 users_add_insert = 'INSERT INTO users(slack_id, name, membership) VALUES(?,?,?);'
@@ -92,3 +109,31 @@ cleanups_generate_selectCount = 'SELECT count() FROM cleanups WHERE used = 0;'
 cleanups_generate_selectCleanup = 'SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC;'
 cleanups_generate_updateUsed = 'UPDATE cleanups SET used = 0'
 cleanups_generate_selectOutput = 'SELECT name, captain, cleanup FROM "cleanups_{}" ORDER BY cleanup, captain DESC;'
+#Generate Takedowns
+takedowns_generate_table = 'CREATE TABLE IF NOT EXISTS "takedowns_{}" AS SELECT slack_id, name FROM users;'
+takedowns_generate_alter = '''
+                            BEGIN;
+                            ALTER TABLE "takedowns_{}" ADD COLUMN assignment DEFAULT NULL;
+                            COMMIT;
+                          '''
+takedowns_generate_sum = 'SELECT SUM(monday_lunch), SUM(monday_dinner), SUM(tuesday_lunch), SUM(tuesday_dinner), SUM(wednesday_lunch), SUM(wednesday_dinner), SUM(thursday_lunch), SUM(thursday_dinner), SUM(friday_lunch), SUM(friday_dinner) FROM "takedowns";'
+takedowns_generate_minimum = 'SELECT * FROM "takedowns" WHERE {} = 1 AND ("membership" = "In-House 2" OR "membership" = "In-House 3" OR "membership" = "Townsman") AND used = 0 ORDER BY "takedown_count";'
+takedowns_generate_update= '''
+                                    BEGIN;
+                                    UPDATE takedowns SET takedown_count = takedown_count + 1 WHERE slack_id = "{}";
+                                    UPDATE takedowns SET used = 1 WHERE slack_id = "{}";
+                                    UPDATE "takedowns_{}" SET assignment = "{}" WHERE slack_id = "{}";
+                                    COMMIT;
+                                  '''
+takedowns_generate_fill = 'SELECT * FROM "takedowns" WHERE {} = 1 AND used = 0 ORDER BY "takedown_count";'
+takedowns_generate_remaining = 'SELECT slack FROM "takedowns" WHERE used = 0;'
+takedowns_generate_break = 'UPDATE "takedowns_{}" SET assignment = "Break" WHERE slack_id = "{}";'
+takedowns_generate_updateUsed = 'UPDATE takedowns SET used = 0;'
+takedowns_generate_error = '''
+                             BEGIN;
+                             UPDATE takedowns SET takedown_count = takedown_count - 1 WHERE used = 1;
+                             UPDATE takedowns SET used = 0;
+                             UPDATE "takedowns_{}" SET assignment = NULL;
+                             COMMIT;
+                          '''
+takedowns_generate_selectOutput = 'SELECT name, assignment FROM "takedowns_{}" ORDER BY assignment ASC;'

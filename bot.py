@@ -92,7 +92,6 @@ def interactions():
                 takedown[8] = 1
             elif day["value"] == "value-FD":
                 takedown[9] = 1
-        add_user(conn, user)
         add_takedown(conn, takedown)
     elif action == "actionId-usersubmit":
         slack_id = data["user"]["id"]
@@ -136,8 +135,12 @@ def generatecleanups():
 
 @app.route('/generate-takedowns', methods=['POST'])
 def generatetakedowns():
-    status = generate_takedown(conn)
-    print(status)
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get("channel_id")
+    status = Thread(target=generate_takedown, args=(conn, channel_id, client)).start()
+    if status:
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Error Generating cleanups Here is the sum count, evaluate and have members update availability. {}".format(status))
     return Response(), 200
 
 @app.route('/test', methods=['POST'])

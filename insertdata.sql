@@ -33,53 +33,43 @@ INSERT INTO users VALUES
 ("UASDZA64E", "Skyler", "Townsman"),
 ("UFSDZA64E", "Huy N", "Townsman"),
 ("UCGDZA64E", "Heze", "Townsman"),
-("UCSDKA64E", "Andrew", "Townsman"),
 ("UCSDZL64E", "Jason", "Townsman"),
 ("UCSDDA64E", "Bryant", "Townsman"),
 ("UCSEZA64E", "Roberto", "Townsman"),
-("UCSDAA64E", "Zach", "Townsman"),
-("UCSDZD64E", "Brandon", "Townsman");
+("UCSDAA64E", "Zach", "Townsman");
 
-INSERT INTO takedowns VALUES
-(NULL, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, NULL, NULL,"In-House", "UCQMZA22E"),
-(NULL, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, NULL, NULL,"In-House", "UCQMZA63E"),
-(NULL, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, NULL, NULL,"In-House", "UCQMZG64E"),
-(NULL, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, NULL, NULL,"In-House", "UCQMAA62E"),
-(NULL, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, NULL, NULL,"In-House", "UCGMZA63E"),
-(NULL, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,"In-House", "UWEMZA64E"),
-(NULL, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, NULL, NULL,"In-House", "GFQMZA62E"),
-(NULL, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, NULL, NULL,"In-House", "UCQMJH63E"),
-(NULL, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, NULL, NULL,"In-House", "ULJMZA64E"),
-(NULL, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, NULL, NULL,"In-House", "UCQM7862E"),
-(NULL, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, NULL, NULL,"In-House", "UHMMZA63E"),
-(NULL, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, NULL, NULL,"In-House", "UCOPZA64E"),
-(NULL, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, NULL, NULL,"In-House", "QWQMZA62E"),
-(NULL, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, NULL, NULL,"In-House", "UCJKZA63E"),
-(NULL, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, NULL, NULL,"In-House", "UCQM2R64E"),
-(NULL, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, NULL, NULL,"In-House", "UCE4ZA62E"),
-(NULL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, NULL, NULL,"In-House", "USQMZA63E"),
-(NULL, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, NULL, NULL,"In-House", "UCQMQW64E"),
-(NULL, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, NULL, NULL,"In-House", "UCQMZER2E"),
-(NULL, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, NULL, NULL,"In-House", "UCHMZA63E"),
-(NULL, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, NULL, NULL,"In-House", "UJKMZA64E"),
-(NULL, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, NULL, NULL,"In-House", "UCQMZ2D2E"),
-(NULL, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, NULL, NULL,"In-House", "UCQMZ253E"),
-(NULL, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, NULL, NULL,"In-House", "UCQMZA2FE"),
-(NULL, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, NULL, NULL,"In-House", "UCQMZ8G4E"),
-(NULL, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, NULL, NULL,"In-House", "UCHJZA64E"),
-(NULL, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, NULL, NULL,"In-House", "UCQ23A64E"),
-(NULL, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, NULL, NULL,"In-House", "UCQMZH64E"),
-(NULL, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, NULL, NULL,"In-House", "UCQS2A64E"),
-(NULL, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, NULL, NULL,"In-House", "UCQG4A64E"),
-(NULL, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, NULL, NULL,"Townsman", "UCQMZASDE"),
-(NULL, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, NULL, NULL,"Townsman", "UCQ34A64E"),
-(NULL, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, NULL, NULL,"Townsman", "UCQMZA6HB"),
-(NULL, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, NULL, NULL,"Townsman", "UCSDZA64E"),
-(NULL, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, NULL, NULL,"Townsman", "UCQMZ234E"),
-(NULL, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, NULL, NULL,"Townsman", "UCSDZA64E"),
-(NULL, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, NULL, NULL,"New Member", "UCQM2234E"),
-(NULL, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, NULL, NULL,"New Member", "UCQM5T64E"),
-(NULL, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, NULL, NULL,"New Member", "UC2EE2F64E"),
-(NULL, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, NULL, NULL,"New Member", "UCQGBF64E"),
-(NULL, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, NULL, NULL,"New Member", "UCAG2F64E"),
-(NULL, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, NULL, NULL,"New Member", "UC2D2F64E");
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Anthony A';
+UPDATE 'takedowns' SET 'monday_lunch' = 1, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 1, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Fran';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 1, 'friday_lunch' = 1, 'friday_dinner' = 1 WHERE name = 'Derek';
+UPDATE 'takedowns' SET 'monday_lunch' = 1, 'monday_dinner' = 1, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Kevin';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 1, 'friday_dinner' = 0 WHERE name = 'Huy C';
+UPDATE 'takedowns' SET 'monday_lunch' = 1, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 1, 'friday_dinner' = 0 WHERE name = 'Pedro';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 1, 'friday_dinner' = 1 WHERE name = 'John';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 1, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Charles';
+UPDATE 'takedowns' SET 'monday_lunch' = 1, 'monday_dinner' = 1, 'tuesday_lunch' = 1, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 1, 'friday_lunch' = 1, 'friday_dinner' = 1 WHERE name = 'Dylan';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 1, 'friday_lunch' = 1, 'friday_dinner' = 1 WHERE name = 'Cameron';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 1, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 1, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Ronald';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Jovany';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 1 WHERE name = 'Aleks';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 1, 'friday_dinner' = 1 WHERE name = 'Marshall';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 1, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Anthony N';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Zawad';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Joel';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 1, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Ronan';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 1, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Remy';
+UPDATE 'takedowns' SET 'monday_lunch' = 1, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Arsh';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 1, 'thursday_dinner' = 1, 'friday_lunch' = 1, 'friday_dinner' = 1 WHERE name = 'Thupten';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 1, 'friday_dinner' = 0 WHERE name = 'Anudeep';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Eddy';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Sean';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 1, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'David';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Patrick';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Jeremiah';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 1 WHERE name = 'Ricky';
+UPDATE 'takedowns' SET 'monday_lunch' = 1, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Skyler';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Huy N';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Heze';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Jason';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Bryant';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Roberto';
+UPDATE 'takedowns' SET 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Zach';
