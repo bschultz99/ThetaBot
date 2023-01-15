@@ -59,4 +59,15 @@ SELECT * FROM "takedowns_2023-01-12" ORDER BY assignment ASC;
 
 UPDATE takedowns SET takedown_count = 0;
 UPDATE takedowns SET used = 0;
-UPDATE "takedowns_2023-01-12" SET assignment = "NULL";
+UPDATE "takedowns_2023-01-15" SET assignment = "NULL";
+
+SELECT * FROM "takedowns" WHERE used = 0;
+
+SELECT * from admin WHERE slack_id = 'UCQMZA63E'
+
+UPDATE cleanups SET captain = 0 WHERE name = 'Fran'
+
+UPDATE admin SET slack_id = "UCQMZA62E" WHERE name = 'Bryant';
+
+SELECT * FROM "takedowns_2023-01-14" WHERE assignment != "Break";
+UPDATE "takedowns" SET takedown_count = takedown_count - 1 WHERE slack_id = "UCQMZA22E";

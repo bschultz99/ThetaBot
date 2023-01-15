@@ -25,6 +25,7 @@ def startup(con):
     create_table(con, cleanupSettings_startup_table)
     create_table(con, cleanups_startup_table)
     create_table(con, takedowns_startup_table)
+    create_table(con, admin_startup_table)
     try: 
         cur.executescript(cleanups_startup_alter)
     except Error as e:
@@ -203,12 +204,21 @@ def generate_takedown(con, channel_id, client):
         positions[position] = 1
     takedown_break = cur.execute(takedowns_generate_remaining).fetchall()
     for i in range(len(takedown_break)):
-        cur.executescript(takedowns_generate_break.format(today, takedown_break[i]))
+        cur.execute(takedowns_generate_break.format(today, takedown_break[i][0]))
+        con.commit()
     cur.execute(takedowns_generate_updateUsed)
     con.commit()
     takedown_weekly(takedowns_generate_selectOutput.format(today), con, channel_id, client)
         
-
+def revert_takedowns(con):
+    today = date.today()
+    cur = con.cursor()
+    people = list(cur.execute(takedowns_revert_select.format(today)).fetchall())
+    for i in range(len(people)):
+        cur.execute(takedowns_revert_update.format(people[i][0]))
+        con.commit()
+    cur.execute(takedowns_revert_week.format(today))
+    con.commit()
 def smallest(sum, positions):
     smallest = 1000000
     position = 0
@@ -217,3 +227,10 @@ def smallest(sum, positions):
             smallest = sum[i]
             position = i
     return position
+
+def admin_check(con, user_id):
+    cur = con.cursor()
+    person = cur.execute(admin_select.format(user_id)).fetchall()
+    if person:
+        return True
+    return False

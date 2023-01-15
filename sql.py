@@ -41,6 +41,12 @@ takedowns_startup_alter = '''
                             ALTER TABLE takedowns ADD COLUMN friday_dinner integer DEFAULT 0;
                             COMMIT;
                           '''
+admin_startup_table = '''
+                        CREATE TABLE IF NOT EXISTS admin (
+                            slack_id text PRIMARY KEY NOT NULL,
+                            name text NOT NULL
+                        );
+                      '''
 #User
 users_add_select = 'SELECT slack_id FROM users WHERE slack_id = "{}";'
 users_add_insert = 'INSERT INTO users(slack_id, name, membership) VALUES(?,?,?);'
@@ -126,7 +132,7 @@ takedowns_generate_update= '''
                                     COMMIT;
                                   '''
 takedowns_generate_fill = 'SELECT * FROM "takedowns" WHERE {} = 1 AND used = 0 ORDER BY "takedown_count";'
-takedowns_generate_remaining = 'SELECT slack FROM "takedowns" WHERE used = 0;'
+takedowns_generate_remaining = 'SELECT slack_id FROM "takedowns" WHERE used = 0;'
 takedowns_generate_break = 'UPDATE "takedowns_{}" SET assignment = "Break" WHERE slack_id = "{}";'
 takedowns_generate_updateUsed = 'UPDATE takedowns SET used = 0;'
 takedowns_generate_error = '''
@@ -137,3 +143,8 @@ takedowns_generate_error = '''
                              COMMIT;
                           '''
 takedowns_generate_selectOutput = 'SELECT name, assignment FROM "takedowns_{}" ORDER BY assignment ASC;'
+takedowns_revert_select = 'SELECT slack_id FROM "takedowns_{}" WHERE assignment != "Break";'
+takedowns_revert_update = 'UPDATE "takedowns" SET takedown_count = takedown_count - 1 WHERE slack_id = "{}";'
+takedowns_revert_week = 'UPDATE "takedowns_{}" SET assignment = "NULL";'
+# Admin
+admin_select = 'SELECT * FROM admin where slack_id = "{}";'
