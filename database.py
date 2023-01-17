@@ -219,6 +219,12 @@ def revert_takedowns(con):
         con.commit()
     cur.execute(takedowns_revert_week.format(today))
     con.commit()
+
+def display_takedowns(con, user_id, client):
+    takedowns_display(takedowns_display_select, con, user_id, client)
+def display_cleanups(con, user_id, client):
+    cleanups_display(cleanups_display_select, con, user_id, client)
+
 def smallest(sum, positions):
     smallest = 1000000
     position = 0

@@ -71,3 +71,5 @@ UPDATE admin SET slack_id = "UCQMZA62E" WHERE name = 'Bryant';
 
 SELECT * FROM "takedowns_2023-01-14" WHERE assignment != "Break";
 UPDATE "takedowns" SET takedown_count = takedown_count - 1 WHERE slack_id = "UCQMZA22E";
+
+SELECT name, membership, takedown_count, monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner FROM takedowns;

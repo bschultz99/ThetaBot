@@ -148,3 +148,7 @@ takedowns_revert_update = 'UPDATE "takedowns" SET takedown_count = takedown_coun
 takedowns_revert_week = 'UPDATE "takedowns_{}" SET assignment = "NULL";'
 # Admin
 admin_select = 'SELECT * FROM admin where slack_id = "{}";'
+# Takedowns Display
+takedowns_display_select = 'SELECT name, membership, takedown_count, monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner FROM takedowns;'
+# Cleanups Display
+cleanups_display_select = 'SELECT * FROM cleanups;'

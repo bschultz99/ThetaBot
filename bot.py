@@ -42,7 +42,7 @@ def cleanupsettings():
     if admin_check(conn, user_id):
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=cleanup_settings_form)
     else:
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="You Shouldn't be here. $5 Fine.")
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/userform', methods=['POST'])
@@ -61,7 +61,7 @@ def removeuser():
     if admin_check(conn, user_id):
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=remove_user_form)
     else:
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="You Shouldn't be here. $5 Fine.")
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 
@@ -135,7 +135,7 @@ def generatecleanupdatabase():
     if admin_check(conn, user_id):
         generate_cleanups_database(conn)
     else:
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="You Shouldn't be here. $5 Fine.")
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/generate-cleanups', methods=['POST'])
@@ -146,7 +146,7 @@ def generatecleanups():
     if admin_check(conn, user_id):
         Thread(target=generate_cleanups, args=(conn, channel_id, client)).start()
     else:
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="You Shouldn't be here. $5 Fine.")
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/generate-takedowns', methods=['POST'])
@@ -159,7 +159,7 @@ def generatetakedowns():
         if status:
             client.chat_postEphemeral(channel=channel_id, user=user_id, text="Error Generating cleanups Here is the sum count, evaluate and have members update availability. {}".format(status))
     else:
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="You Shouldn't be here. $5 Fine.")
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/revert-takedowns', methods=['POST'])
@@ -170,7 +170,7 @@ def reverttakedowns():
     if admin_check(conn, user_id):
         status = Thread(target=revert_takedowns, args=(conn,)).start()
     else:
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="You Shouldn't be here. $5 Fine.")
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/test', methods=['POST'])
@@ -179,6 +179,20 @@ def test():
     channel_id = data.get("channel_id")
     data = client.conversations_create(name="testchannel10", is_private = True)
     client.conversations_invite(channel=data["channel"]["id"], users=("UCQMZA62E"))
+    return Response(), 200
+@app.route('/display-takedowns', methods=['POST'])
+def displaytakedowns():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get('channel_id')
+    status = Thread(target=display_takedowns, args=(conn, user_id, client)).start()
+    return Response(), 200
+@app.route('/display-cleanups', methods=['POST'])
+def displaycleanups():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get('channel_id')
+    status = Thread(target=display_cleanups, args=(conn, user_id, client)).start()
     return Response(), 200
 
 
