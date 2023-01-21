@@ -376,6 +376,76 @@ cleanup_settings_form = [
 		}
 ]
 
+admin_add_form = [
+	{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Pick a position for the admin"
+			},
+			"accessory": {
+				"type": "static_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select a position"
+				},
+				"options": [
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Theta 1"
+						},
+						"value": "Theta-1"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Theta 3"
+						},
+						"value": "Theta-3"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Developer"
+						},
+						"value": "Developer"
+					}
+				],
+				"action_id": "static_select-action"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Pick a user to make admin"
+			},
+			"accessory": {
+				"type": "users_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select a user"
+				},
+				"action_id": "users_select-action"
+			}
+		},
+		{
+			"type": "actions",
+			"elements": [
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Submit"
+					},
+					"value": "adminadd-submit",
+					"action_id": "actionId-adminaddsubmit"
+				}
+			]
+		}
+]
+
 help_message = """Welcome to the takedown bot. These are the following features:
 1. \help - Gives information on how the slack commands work.
 2. \\takedownform - Update your takedown availability

@@ -1,8 +1,9 @@
 import slack
 import os
+import requests
 from pathlib import Path
 from dotenv import load_dotenv
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from slackeventsapi import SlackEventAdapter
 from templates import *
 from database import *
@@ -125,6 +126,12 @@ def interactions():
         input_keys = list(data["state"]["values"])
         cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
         remove_cleanup(conn, cleanupName)
+    elif action == "actionId-adminaddsubmit":
+        input_keys = list(data["state"]["values"])
+        position = data["state"]["values"][input_keys[0]]["static_select-action"]["selected_option"]["value"]
+        name = data["state"]["values"][input_keys[1]]["users_select-action"]["selected_user"]
+        admin_add(conn, position, name)
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''})
     return Response(), 200
 
 @app.route('/generate-cleanup-database', methods=['POST'])
@@ -195,6 +202,16 @@ def displaycleanups():
     status = Thread(target=display_cleanups, args=(conn, user_id, client)).start()
     return Response(), 200
 
+@app.route('/admin-form', methods=['POST'])
+def adminform():
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get("channel_id")
+    if admin_check(conn, user_id):
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=admin_add_form)
+    else:
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
+    return Response(), 200
 
 
 if __name__ == "__main__":

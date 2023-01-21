@@ -44,7 +44,7 @@ takedowns_startup_alter = '''
 admin_startup_table = '''
                         CREATE TABLE IF NOT EXISTS admin (
                             slack_id text PRIMARY KEY NOT NULL,
-                            name text NOT NULL
+                            position text NOT NULL
                         );
                       '''
 #User
@@ -148,6 +148,9 @@ takedowns_revert_update = 'UPDATE "takedowns" SET takedown_count = takedown_coun
 takedowns_revert_week = 'UPDATE "takedowns_{}" SET assignment = "NULL";'
 # Admin
 admin_select = 'SELECT * FROM admin where slack_id = "{}";'
+admin_add_select = 'SELECT slack_id FROM admin WHERE slack_id = "{}";'
+admin_add_insert = 'INSERT INTO admin(slack_id, position) VALUES(?,?);'
+admin_add_update = 'UPDATE admin SET position = "{}" WHERE slack_id = "{}";'
 # Takedowns Display
 takedowns_display_select = 'SELECT name, membership, takedown_count, monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner FROM takedowns;'
 # Cleanups Display

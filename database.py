@@ -222,6 +222,7 @@ def revert_takedowns(con):
 
 def display_takedowns(con, user_id, client):
     takedowns_display(takedowns_display_select, con, user_id, client)
+
 def display_cleanups(con, user_id, client):
     cleanups_display(cleanups_display_select, con, user_id, client)
 
@@ -240,3 +241,11 @@ def admin_check(con, user_id):
     if person:
         return True
     return False
+
+def admin_add(con, position, user_id):
+    cur = con.cursor()
+    if (cur.execute(admin_add_select.format(user_id)).fetchall()):
+        cur.execute(admin_add_update.format(position, user_id))
+    else:
+        cur.execute(admin_add_insert, (user_id, position))
+    con.commit()

@@ -5,7 +5,7 @@ DROP TABLE 'cleanups_2023-01-07';
 
 DROP TABLE 'takedowns';
 
-ALTER TABLE 'takedowns' DROP 'break_count';
+ALTER TABLE 'admin' ADD 'position';
 
 SELECT SUM(monday_lunch), SUM(monday_dinner), SUM(tuesday_lunch), SUM(tuesday_dinner), SUM(wednesday_lunch), SUM(wednesday_dinner), SUM(thursday_lunch), SUM(thursday_dinner), SUM(friday_lunch), SUM(friday_dinner) FROM "takedowns";
 
@@ -73,3 +73,10 @@ SELECT * FROM "takedowns_2023-01-14" WHERE assignment != "Break";
 UPDATE "takedowns" SET takedown_count = takedown_count - 1 WHERE slack_id = "UCQMZA22E";
 
 SELECT name, membership, takedown_count, monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner FROM takedowns;
+
+UPDATE "admin" SET position = "Owner" WHERE name = "Bryant";
+
+DELETE FROM admin WHERE slack_id = 'UWEMZA34E';
+
+UPDATE cleanups SET captainCount = captainCount + 1 WHERE name = 'Sean';
+UPDATE cleanups SET '1 Deck' = '1 Deck' + 1 WHERE name = 'Zach';
