@@ -1,5 +1,9 @@
 -- SQLite
-
+INSERT into users VALUES
+("GHQMZA22E", "Phu", "New Member"),
+("ILQMZA22E", "Khang", "New Member"),
+("DCQMZA22E", "Kaleb", "New Member"),
+("UJQMZA22E", "Khoi", "New Member");
 
 INSERT INTO users VALUES
 ("UCQMZA22E", "Anthony A", "In-House 3"),
