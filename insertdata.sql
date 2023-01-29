@@ -1,9 +1,9 @@
 -- SQLite
-INSERT into users VALUES
-("GHQMZA22E", "Phu", "New Member"),
-("ILQMZA22E", "Khang", "New Member"),
-("DCQMZA22E", "Kaleb", "New Member"),
-("UJQMZA22E", "Khoi", "New Member");
+INSERT into takedowns VALUES
+("GHQMZA22E", "Phu", "New Member",0,0,0,0,0,0,0,0,0,0,0,0),
+("ILQMZA22E", "Khang", "New Member",0,0,0,0,0,0,0,0,0,0,0,0),
+("DCQMZA22E", "Kaleb", "New Member",0,0,0,0,0,0,0,0,0,0,0,0),
+("UJQMZA22E", "Khoi", "New Member",0,0,0,0,0,0,0,0,0,0,0,0);
 
 INSERT INTO users VALUES
 ("UCQMZA22E", "Anthony A", "In-House 3"),
@@ -81,4 +81,8 @@ UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner'
 UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Jason';
 UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Bryant';
 UPDATE 'takedowns' SET 'takedown_count' = 0, 'monday_lunch' = 0, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Roberto';
-UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Zach';
+UPDATE 'takedowns' SET 'takedown_count' = 2, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 1, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 0, 'thursday_lunch' = 1, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Zach';
+UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Phu';
+UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Khang';
+UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Kaleb';
+UPDATE 'takedowns' SET 'takedown_count' = 1, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 1, 'wednesday_lunch' = 1, 'wednesday_dinner' = 0, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Khoi';
