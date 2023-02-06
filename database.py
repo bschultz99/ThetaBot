@@ -122,7 +122,7 @@ def generate_cleanups(con, channel_id, client):
             select = cleanups_generate_selectMinInHouse2
         elif cleanup[1] == 3:
             select = cleanups_generate_selectMinInHouse3
-        for _ in range(cleanup[3]):
+        for _ in range(cleanup[3] - 1):
             person = (cur.execute(select.format(cleanup[0]))).fetchone()[0]
             try:
                 cur.executescript(cleanups_generate_update.format(cleanup[0], cleanup[0], person, person, today, cleanup[0], person))
