@@ -87,7 +87,7 @@ UPDATE cleanup_settings set minimum_people = 3 WHERE cleanup_id = "Stairs and Ha
 
 UPDATE cleanups SET captain = 0 WHERE name = "Anthony N";
 
-UPDATE cleanups SET 'Study/Laundry' = 'Study/Laundry' + 1 WHERE name = 'Bryant';
+UPDATE cleanups SET 'Kitchen' = 2 WHERE name = 'Khoi';
 UPDATE cleanups SET captainCount = captainCount + 1 WHERE name = 'Bryant';
 
 UPDATE takedowns SET takedown_count = takedown_count - 1 WHERE name = 'Zach';
