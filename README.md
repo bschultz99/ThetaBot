@@ -7,8 +7,10 @@ A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups a
 3. pip install python-dotenv
 4. pip install flask
 5. pip install slackeventsapi
-6. sqllite extenstion vscode
-7. ngrok extenstion vscode
+6. pip install pandas
+7. pip install weasyprint
+6. sqlite extenstion vscode
+7. ngrok extenstion vscode for local development
 
 
 # Round 1 Features
