@@ -11,19 +11,18 @@ from threading import Thread
 import json
 import ssl
 
-# Loads the environment variables from the current directory in .env
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
-#SSL certification
 ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False
 ssl_context.verify_mode = ssl.CERT_NONE
 
-#Creation of the Flask App with the Slack App's Secret and Token
 app = Flask(__name__)
 slack_event_adapter = SlackEventAdapter(os.environ['SLACK_SIGNING_SECRET'],'/slack/events', app)
 client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'], ssl=ssl_context)
+
+
 
 @app.route('/help', methods=['POST'])
 def help():

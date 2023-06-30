@@ -85,7 +85,7 @@ UPDATE takedowns SET wednesday_lunch = 0 WHERE name = 'Zach';
 
 UPDATE cleanup_settings set minimum_people = 2 WHERE cleanup_id = "Deckbrush 1+3";
 
-UPDATE cleanups SET captain = 0 WHERE name = "Anthony N";
+UPDATE cleanups SET captain = 0 WHERE name = "Remy";
 
 UPDATE cleanups SET 'Kitchen' = 2 WHERE name = 'Khoi';
 UPDATE cleanups SET captainCount = captainCount + 1 WHERE name = 'Bryant';
