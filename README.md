@@ -7,32 +7,34 @@ A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups a
 3. pip install python-dotenv
 4. pip install flask
 5. pip install slackeventsapi
-6. sqllite extenstion vscode
-7. ngrok extenstion vscode
+6. pip install pandas
+7. pip install weaslyprint
+8. sqllite extenstion vscode
+9. ngrok extenstion vscode
 
 
-# Round 1 Features
-## Forms
-1. Userform
-    Gets in user information; Name, slack-id, membership status
-2. Takdownform
-    Gets in user takedown availability; Days-available
-3. TownsmanCleanup form
-    Gets in townsman availability for clean ups; select 2 days
 
-## Generation
-1. Takedowns
 
-2. Cleanups
-* Kitchen (1)
-* Bathroom 2 (3)
-* Bathroom 3 (3)
-* Deckbrush 0+2 (6)
-* Deckbrush 1+3 (6)
-* Brojo/Brolo (7)
-* Study/Laundry (7)
-* 0 Deck (2)
-* 1 Deck (4)
-* Stairs and Halls (5)
 
-Cleanups table
+Things to Do:
+1. DOCUMENTATION
+2. Go through all the commands and reevaluate
+3. Summer generation script(s)
+4. Edge cases on cleanups and takedowns
+5. Deletion of temp tables
+6. Pylint?
+7. Some form of production deployment
+8. Rewrite Help message
+
+
+Features:
+1. Channel Generation
+2. Channel Deletion
+3. Reset Semester
+4. Service Hours
+5. Voting
+6. Fines
+7. Naughty List
+8. Trading
+9. Autoposting
+10. Revert cleanups

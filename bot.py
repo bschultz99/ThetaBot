@@ -32,7 +32,7 @@ def help():
     client.chat_postEphemeral(channel=channel_id, user=user_id, text=help_message)
     return Response(), 200
 
-@app.route('/takedownform', methods=['POST'])
+@app.route('/takedownform', methods=['POST']) #MERGE
 def takedownform():
     data = request.form
     user_id = data.get('user_id')
@@ -51,7 +51,7 @@ def cleanupsettings():
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
-@app.route('/userform', methods=['POST'])
+@app.route('/userform', methods=['POST']) #MERGE
 def userform():
     data = request.form
     user_id = data.get('user_id')
