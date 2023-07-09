@@ -22,8 +22,6 @@ app = Flask(__name__)
 slack_event_adapter = SlackEventAdapter(os.environ['SLACK_SIGNING_SECRET'],'/slack/events', app)
 client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'], ssl=ssl_context)
 
-
-
 @app.route('/help', methods=['POST'])
 def help():
     data = request.form
@@ -32,12 +30,12 @@ def help():
     client.chat_postEphemeral(channel=channel_id, user=user_id, text=help_message)
     return Response(), 200
 
-@app.route('/takedownform', methods=['POST']) #MERGE
-def takedownform():
+@app.route('/userform', methods=['POST'])
+def userform():
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
-    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=takedown_form)
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=user_form)
     return Response(), 200
 
 @app.route('/cleanupsettings', methods=['POST'])
@@ -51,13 +49,6 @@ def cleanupsettings():
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
-@app.route('/userform', methods=['POST']) #MERGE
-def userform():
-    data = request.form
-    user_id = data.get('user_id')
-    channel_id = data.get("channel_id")
-    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=user_form)
-    return Response(), 200
 
 @app.route('/removeuser', methods=['POST'])
 def removeuser():
@@ -68,75 +59,6 @@ def removeuser():
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=remove_user_form)
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
-    return Response(), 200
-
-
-@app.route('/interactions', methods=['POST'])
-def interactions():
-    data = json.loads(request.form.get("payload"))
-    action = data["actions"][0]["action_id"]
-    if action == "actionId-takedownsubmit":
-        slack_id = data["user"]["id"]
-        input_keys = list(data["state"]["values"])
-        name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
-        membership = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["text"]["text"]
-        user = (name, membership, slack_id)
-        days = data["state"]["values"][input_keys[2]]["takedowns-action"]["selected_options"]
-        takedown = [0,0,0,0,0,0,0,0,0,0,membership,slack_id]
-        for day in days:
-            if day["value"] == "value-ML":
-                takedown[0] = 1
-            elif day["value"] == "value-MD":
-                takedown[1] = 1
-            elif day["value"] == "value-TL":
-                takedown[2] = 1
-            elif day["value"] == "value-TD":
-                takedown[3] = 1
-            elif day["value"] == "value-WL":
-                takedown[4] = 1
-            elif day["value"] == "value-WD":
-                takedown[5] = 1
-            elif day["value"] == "value-RL":
-                takedown[6] = 1
-            elif day["value"] == "value-RD":
-                takedown[7] = 1
-            elif day["value"] == "value-FL":
-                takedown[8] = 1
-            elif day["value"] == "value-FD":
-                takedown[9] = 1
-        add_takedown(conn, takedown)
-    elif action == "actionId-usersubmit":
-        slack_id = data["user"]["id"]
-        input_keys = list(data["state"]["values"])
-        name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
-        membership = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["text"]["text"]
-        user = (slack_id, name, membership)
-        add_user(conn, user)
-    elif action == "actionId-removesubmit":
-        input_keys = list(data["state"]["values"])
-        slack_id = data["state"]["values"][input_keys[0]]["users_select-action"]["selected_user"]
-        remove_user(conn, slack_id)
-    elif action == "actionId-cleanupsettingssubmit":
-        slack_id = data["user"]["id"]
-        input_keys = list(data["state"]["values"])
-        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
-        deck = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["value"]
-        townsman = data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"]
-        minimumInHouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
-        minimumPeople = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
-        cleanup = (cleanupName, deck, townsman, minimumInHouse, minimumPeople)
-        add_cleanup(conn, cleanup)
-    elif action == "actionId-cleanupsettingremove":
-        slack_id = data["user"]["id"]
-        input_keys = list(data["state"]["values"])
-        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
-        remove_cleanup(conn, cleanupName)
-    elif action == "actionId-adminaddsubmit":
-        input_keys = list(data["state"]["values"])
-        position = data["state"]["values"][input_keys[0]]["static_select-action"]["selected_option"]["value"]
-        name = data["state"]["values"][input_keys[1]]["users_select-action"]["selected_user"]
-        admin_add(conn, position, name)
-        requests.post(data["response_url"], json={'delete_original': True, 'text': ''})
     return Response(), 200
 
 @app.route('/generate-cleanup-database', methods=['POST'])
@@ -192,6 +114,7 @@ def test():
     data = client.conversations_create(name="testchannel10", is_private = True)
     client.conversations_invite(channel=data["channel"]["id"], users=("UCQMZA62E"))
     return Response(), 200
+
 @app.route('/display-takedowns', methods=['POST'])
 def displaytakedowns():
     data = request.form
@@ -199,6 +122,7 @@ def displaytakedowns():
     channel_id = data.get('channel_id')
     status = Thread(target=display_takedowns, args=(conn, user_id, client)).start()
     return Response(), 200
+
 @app.route('/display-cleanups', methods=['POST'])
 def displaycleanups():
     data = request.form
@@ -218,6 +142,66 @@ def adminform():
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
+@app.route('/interactions', methods=['POST'])
+def interactions():
+    data = json.loads(request.form.get("payload"))
+    action = data["actions"][0]["action_id"]
+    if action == "actionId-usersubmit":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        membership = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["text"]["text"]
+        user = (slack_id, name, membership)
+        days = data["state"]["values"][input_keys[2]]["takedowns-action"]["selected_options"]
+        takedowns = [0,0,0,0,0,0,0,0,0,0,membership,slack_id]
+        for day in days:
+            if day["value"] == "value-ML":
+                takedowns[0] = 1
+            elif day["value"] == "value-MD":
+                takedowns[1] = 1
+            elif day["value"] == "value-TL":
+                takedowns[2] = 1
+            elif day["value"] == "value-TD":
+                takedowns[3] = 1
+            elif day["value"] == "value-WL":
+                takedowns[4] = 1
+            elif day["value"] == "value-WD":
+                takedowns[5] = 1
+            elif day["value"] == "value-RL":
+                takedowns[6] = 1
+            elif day["value"] == "value-RD":
+                takedowns[7] = 1
+            elif day["value"] == "value-FL":
+                takedowns[8] = 1
+            elif day["value"] == "value-FD":
+                takedowns[9] = 1
+        add_user(conn, user, takedowns)
+    elif action == "actionId-removesubmit":
+        input_keys = list(data["state"]["values"])
+        slack_id = data["state"]["values"][input_keys[0]]["users_select-action"]["selected_user"]
+        remove_user(conn, slack_id)
+    elif action == "actionId-cleanupsettingssubmit":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        deck = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["value"]
+        townsman = data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"]
+        minimumInHouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
+        minimumPeople = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
+        cleanup = (cleanupName, deck, townsman, minimumInHouse, minimumPeople)
+        add_cleanup(conn, cleanup)
+    elif action == "actionId-cleanupsettingremove":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        remove_cleanup(conn, cleanupName)
+    elif action == "actionId-adminaddsubmit":
+        input_keys = list(data["state"]["values"])
+        position = data["state"]["values"][input_keys[0]]["static_select-action"]["selected_option"]["value"]
+        name = data["state"]["values"][input_keys[1]]["users_select-action"]["selected_user"]
+        admin_add(conn, position, name)
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''})
+    return Response(), 200
 
 if __name__ == "__main__":
     conn = create_connection("./thetabot.db")

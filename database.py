@@ -40,7 +40,7 @@ def startup(con):
         print(e)
 
 #Adds user 
-def add_user(con, user): #CHECK why no update of takedowns?
+def add_user(con, user, takedowns):
     cur = con.cursor()
     if (cur.execute(users_add_select.format(user[0])).fetchall()): #If the user exists update user in db
         cur.execute(users_add_update.format(user[1],user[2], user[0])) #Update name and membership based on slack_id
@@ -51,27 +51,17 @@ def add_user(con, user): #CHECK why no update of takedowns?
         cur.execute(users_database_update.format(user[1],user[2], user[0])) #Update name and membership based on slack_id
     else:
         cur.execute(users_database_insert, user)#Add the user to the cleanup table if they do not exist
+    #Update/ADD takedown Database
+    if (cur.execute(users_database_select_takedown.format(user[0])).fetchall()):
+        cur.execute(users_database_update_takedown.format(takedowns[0], takedowns[1], takedowns[2], takedowns[3], takedowns[4], takedowns[5], takedowns[6], takedowns[7], takedowns[8], takedowns[9], user[2], user[0]))
+    else:
+        cur.execute(users_database_insert_takedown.format(takedowns[0], takedowns[1], takedowns[2], takedowns[3], takedowns[4], takedowns[5], takedowns[6], takedowns[7], takedowns[8], takedowns[9], user[2], user[0]))
     con.commit()
     cur.executescript(users_database_updateCaptain.format(user[0], user[0])) #Update captain status
 
 def remove_user(con, slack_id): #Update SQL to include delete from takedowns
     cur = con.cursor()
     cur.executescript(users_remove_delete.format(slack_id, slack_id))
-
-def add_takedown(con, takedowns): #Redo this
-    select_sql = "SELECT * FROM takedowns WHERE slack_id=?"
-    insert_sql = "INSERT INTO takedowns(monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner, membership, slack_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
-    update_sql = "UPDATE takedowns SET monday_lunch = ?, monday_dinner = ?, tuesday_lunch = ?, tuesday_dinner = ?, wednesday_lunch = ?, wednesday_dinner = ?, thursday_lunch = ?, thursday_dinner = ?, friday_lunch = ?, friday_dinner = ?, membership = ? WHERE slack_id = ?"
-    cur = con.cursor()
-    cur.execute(select_sql, (takedowns[11],))
-    rows = cur.fetchall()
-    #print(rows)
-    if not rows:
-        cur.execute(insert_sql, takedowns)
-        con.commit()
-    else:
-        cur.execute(update_sql, takedowns)
-        con.commit()
 
 def add_cleanup(con, cleanup_setting):
     cur = con.cursor()
@@ -180,7 +170,7 @@ def generate_takedown(con, channel_id, client):
     sum = list((cur.execute(takedowns_generate_sum).fetchall())[0])
     slots = ('monday_lunch', 'monday_dinner', 'tuesday_lunch', 'tuesday_dinner', 'wednesday_lunch', 'wednesday_dinner', 'thursday_lunch', 'thursday_dinner', 'friday_lunch', 'friday_dinner')
     positions = [0,0,0,0,0,0,0,0,0,0]
-    for _ in range(10):
+    for _ in range(10): #Put 1 Active on each takedown
         position = smallest(sum, positions)
         people = cur.execute(takedowns_generate_minimum.format(slots[position])).fetchall()
         try:
@@ -191,7 +181,7 @@ def generate_takedown(con, channel_id, client):
         positions[position] = 1
         cur.executescript(takedowns_generate_update.format(people[0][0], people[0][0], today, slots[position], people[0][0]))
     positions = [0,0,0,0,0,0,0,0,0,0]
-    for _ in range(10):
+    for _ in range(10): #Fill each takedown so that there are three people on each
         position = smallest(sum, positions)
         people = cur.execute(takedowns_generate_fill.format(slots[position])).fetchall()
         try:
@@ -207,11 +197,11 @@ def generate_takedown(con, channel_id, client):
             return sum
         cur.executescript(takedowns_generate_update.format(people[1][0], people[1][0], today, slots[position], people[1][0]))
         positions[position] = 1
-    takedown_break = cur.execute(takedowns_generate_remaining).fetchall()
+    takedown_break = cur.execute(takedowns_generate_remaining).fetchall() #Set everyone else on break
     for i in range(len(takedown_break)):
         cur.execute(takedowns_generate_break.format(today, takedown_break[i][0]))
         con.commit()
-    cur.execute(takedowns_generate_updateUsed)
+    cur.execute(takedowns_generate_updateUsed) #Reset used column to 0
     con.commit()
     takedown_weekly(takedowns_generate_selectOutput.format(today), con, channel_id, client)
         

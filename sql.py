@@ -60,6 +60,9 @@ users_database_updateCaptain = '''
                                  UPDATE cleanups SET captain = TRUE WHERE membership != "New Member" AND slack_id = "{}";
                                  COMMIT;
                                '''
+users_database_select_takedown = 'SELECT slack_id FROM takedowns WHERE slack_id = "{}";'
+users_database_update_takedown = 'UPDATE takedowns SET monday_lunch = "{}", monday_dinner = "{}", tuesday_lunch = "{}", tuesday_dinner = "{}", wednesday_lunch = "{}", wednesday_dinner = "{}", thursday_lunch = "{}", thursday_dinner = "{}", friday_lunch = "{}", friday_dinner = "{}", membership = "{}" WHERE slack_id = "{}";'
+users_database_insert_takedown = 'INSERT INTO takedowns(monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner, membership, slack_id) VALUES("{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}");'
 users_remove_delete = '''
                         BEGIN;
                         DELETE FROM users WHERE slack_id = "{}";

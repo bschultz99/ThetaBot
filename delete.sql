@@ -9,9 +9,9 @@ ALTER TABLE 'admin' ADD 'position';
 
 SELECT SUM(monday_lunch), SUM(monday_dinner), SUM(tuesday_lunch), SUM(tuesday_dinner), SUM(wednesday_lunch), SUM(wednesday_dinner), SUM(thursday_lunch), SUM(thursday_dinner), SUM(friday_lunch), SUM(friday_dinner) FROM "takedowns";
 
-UPDATE 'cleanup_settings' SET minimum_inhouse = 1 WHERE cleanup_id = '1 Deck';
+UPDATE 'takedowns' SET slack_id= 'UCQMZA62E' WHERE name = 'Bryant';
 
-DELETE FROM cleanups WHERE name = "Andrew";
+DELETE FROM takedowns WHERE slack_id = "UCQMZA62E";
 
 SELECT * FROM cleanup_settings ORDER BY townsman_captain, deck_requirement;
 
@@ -91,3 +91,7 @@ UPDATE cleanups SET 'Kitchen' = 2 WHERE name = 'Khoi';
 UPDATE cleanups SET captainCount = captainCount + 1 WHERE name = 'Bryant';
 
 UPDATE takedowns SET takedown_count = takedown_count - 1 WHERE name = 'Zach';
+
+SELECT * FROM cleanup_settings ORDER BY townsman_captain, deck_requirement;
+
+SELECT cleanup_id, deck_requirement FROM cleanup_settings WHERE townsman_captain = 0 ORDER BY deck_requirement DESC;

@@ -1,7 +1,6 @@
 # ThetaBot
 A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups and takedowns
 
-
 1. Install python https://www.python.org/downloads/
 2. pip install slackclient
 3. pip install python-dotenv
@@ -10,11 +9,7 @@ A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups a
 6. pip install pandas
 7. pip install weaslyprint
 8. sqllite extenstion vscode
-9. ngrok extenstion vscode
-
-
-
-
+9. ngrok installation
 
 Things to Do:
 1. DOCUMENTATION
@@ -24,8 +19,6 @@ Things to Do:
 5. Deletion of temp tables
 6. Pylint?
 7. Some form of production deployment
-8. Rewrite Help message
-
 
 Features:
 1. Channel Generation
