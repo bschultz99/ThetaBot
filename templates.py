@@ -1,4 +1,5 @@
-user_form = [
+"""Templates used for the slack messages"""
+USER_FORM = [
 		{
 			"type": "input",
 			"element": {
@@ -154,7 +155,7 @@ user_form = [
 		}
 	]
 
-remove_user_form = [
+REMOVE_USER_FORM = [
 		{
 			"type": "section",
 			"text": {
@@ -186,7 +187,7 @@ remove_user_form = [
 		}
 	]
 
-cleanup_settings_form = [
+CLEANUP_SETTINGS_FORM = [
 		{
 			"type": "input",
 			"element": {
@@ -310,7 +311,7 @@ cleanup_settings_form = [
 		}
 ]
 
-admin_add_form = [
+ADMIN_ADD_FORM = [
 	{
 			"type": "section",
 			"text": {
@@ -380,7 +381,251 @@ admin_add_form = [
 		}
 ]
 
-help_message = """Welcome to the takedown bot. These are the following features:
+FINE_FORM = [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Select a member to fine:"
+			},
+			"accessory": {
+				"type": "users_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select a user"
+				},
+				"action_id": "users_select-action"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Pick a date for the fine: "
+			},
+			"accessory": {
+				"type": "datepicker",
+				"initial_date": "2023-08-20",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select a date"
+				},
+				"action_id": "datepicker-action"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Select a type for the fine:"
+			},
+			"accessory": {
+				"type": "static_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select an item"
+				},
+				"options": [
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Cleanup"
+						},
+						"value": "value-C"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Takedown"
+						},
+						"value": "value-T"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Theta Raid"
+						},
+						"value": "value-R"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Roll Call"
+						},
+						"value": "value-M"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Warning"
+						},
+						"value": "value-W"
+					},
+                    {
+						"text": {
+							"type": "plain_text",
+							"text": "Other"
+						},
+						"value": "value-O"
+					}
+				],
+				"action_id": "static_select-action"
+			}
+		},
+		{
+			"type": "input",
+			"element": {
+				"type": "plain_text_input",
+				"action_id": "plain_text_input-action"
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Reason for the fine"
+			}
+		},
+		{
+			"type": "input",
+			"element": {
+				"type": "plain_text_input",
+				"action_id": "plain_text_input-action"
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Amount"
+			}
+		},
+		{
+			"type": "actions",
+			"elements": [
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Submit"
+					},
+					"value": "fines-submit",
+					"action_id": "actionId-finesubmit"
+				}
+			]
+		}
+]
+
+RECONCILLIATION_FORM = [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Select a member to reconcile:"
+			},
+			"accessory": {
+				"type": "users_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select a user"
+				},
+				"action_id": "users_select-action"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Pick a date for the reconcilliation: "
+			},
+			"accessory": {
+				"type": "datepicker",
+				"initial_date": "2023-08-20",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select a date"
+				},
+				"action_id": "datepicker-action"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Select a type for the reconcilliation:"
+			},
+			"accessory": {
+				"type": "static_select",
+				"placeholder": {
+					"type": "plain_text",
+					"text": "Select an item"
+				},
+				"options": [
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Payment"
+						},
+						"value": "value-P"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Makeup"
+						},
+						"value": "value-M"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Error"
+						},
+						"value": "value-E"
+					},
+					{
+						"text": {
+							"type": "plain_text",
+							"text": "Other"
+						},
+						"value": "value-O"
+					}
+				],
+				"action_id": "static_select-action"
+			}
+		},
+		{
+			"type": "input",
+			"element": {
+				"type": "plain_text_input",
+				"action_id": "plain_text_input-action"
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Notes"
+			}
+		},
+		{
+			"type": "input",
+			"element": {
+				"type": "plain_text_input",
+				"action_id": "plain_text_input-action"
+			},
+			"label": {
+				"type": "plain_text",
+				"text": "Amount"
+			}
+		},
+		{
+			"type": "actions",
+			"elements": [
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Submit"
+					},
+					"value": "fines-submit",
+					"action_id": "actionId-reconcilliationsubmit"
+				}
+			]
+		}
+]
+
+HELP_MESSAGE = """Welcome to the takedown bot. These are the following features:
 1. /help - Gives information on how the slack commands work.
 2. /userform - Fill this out to update your name, membership, and takedown availability.
 3. /cleanupsettings - ADMIN - Change cleanups settings i.e. membership, minimum people, etc.
@@ -392,4 +637,20 @@ help_message = """Welcome to the takedown bot. These are the following features:
 9. /display-takedowns - Display the takedown database.
 10. /display-cleanups - Display the cleanups database.
 11. /admin-form - ADMIN - Add admins to the system.
+"""
+
+FINE_MESSAGE= """ You have been fined!
+Type: {}
+Reason: {}
+Date: {}
+Amount: {}
+Issuer: {}
+"""
+
+RECONCILLIATION_MESSAGE= """ Your fine(s) have been reconcilled!
+Type: {}
+Notes: {}
+Date: {}
+Amount: {}
+Issuer: {}
 """

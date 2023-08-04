@@ -13,21 +13,15 @@ A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups a
 
 Things to Do:
 1. DOCUMENTATION
-2. Go through all the commands and reevaluate
-3. Summer generation script(s)
-4. Edge cases on cleanups and takedowns
-5. Deletion of temp tables
-6. Pylint?
-7. Some form of production deployment
+2. Edge cases on takedowns
+3. Pylint
+4. Some form of production deployment
+5. Multithread everything
+6. Channel Generation and Deletion
+7. Reset Semester (Delete everything except admin, cleanups_settings, users) LAST
+8. Revert cleanups (Maybe)
 
-Features:
-1. Channel Generation
-2. Channel Deletion
-3. Reset Semester
-4. Service Hours
-5. Voting
-6. Fines
-7. Naughty List
-8. Trading
-9. Autoposting
-10. Revert cleanups
+Extras:
+1. Trading
+2. Voting
+3. Service Hours

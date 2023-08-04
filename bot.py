@@ -1,15 +1,19 @@
-import slack
+# pylint: disable=assignment-from-no-return, line-too-long
+"""Bot Code"""
 import os
-import requests
 from pathlib import Path
-from dotenv import load_dotenv
-from flask import Flask, request, Response, jsonify
-from slackeventsapi import SlackEventAdapter
-from templates import *
-from database import *
-from threading import Thread
 import json
 import ssl
+from threading import Thread
+from dotenv import load_dotenv
+from flask import Flask, request, Response
+from slackeventsapi import SlackEventAdapter
+import slack
+import requests
+from templates import USER_FORM, REMOVE_USER_FORM, CLEANUP_SETTINGS_FORM, ADMIN_ADD_FORM, FINE_FORM, RECONCILLIATION_FORM, HELP_MESSAGE
+from database import admin_check, generate_cleanups, generate_cleanups_database, generate_takedown, revert_takedowns, display_cleanups, display_takedowns, end_semester, display_fines, display_reconcilliations, display_naughtylist, add_user, remove_user, add_cleanup, remove_cleanup, admin_add, fines, reconcilliations, create_connection, startup
+
+
 
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -23,28 +27,31 @@ slack_event_adapter = SlackEventAdapter(os.environ['SLACK_SIGNING_SECRET'],'/sla
 client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'], ssl=ssl_context)
 
 @app.route('/help', methods=['POST'])
-def help():
+def helpform():
+    """Help Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
-    client.chat_postEphemeral(channel=channel_id, user=user_id, text=help_message)
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text=HELP_MESSAGE)
     return Response(), 200
 
 @app.route('/userform', methods=['POST'])
 def userform():
+    """Userform Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
-    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=user_form)
+    client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=USER_FORM)
     return Response(), 200
 
 @app.route('/cleanupsettings', methods=['POST'])
 def cleanupsettings():
+    """Cleanupsettings Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=cleanup_settings_form)
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=CLEANUP_SETTINGS_FORM)
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
@@ -52,17 +59,19 @@ def cleanupsettings():
 
 @app.route('/removeuser', methods=['POST'])
 def removeuser():
+    """Removeuser Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=remove_user_form)
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=REMOVE_USER_FORM)
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/generate-cleanup-database', methods=['POST'])
 def generatecleanupdatabase():
+    """Generate Cleanups Database Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
@@ -74,6 +83,7 @@ def generatecleanupdatabase():
 
 @app.route('/generate-cleanups', methods=['POST'])
 def generatecleanups():
+    """Generate Cleanups Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
@@ -85,65 +95,125 @@ def generatecleanups():
 
 @app.route('/generate-takedowns', methods=['POST'])
 def generatetakedowns():
+    """Generate Takedowns Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
         status = Thread(target=generate_takedown, args=(conn, channel_id, client)).start()
         if status:
-            client.chat_postEphemeral(channel=channel_id, user=user_id, text="Error Generating cleanups Here is the sum count, evaluate and have members update availability. {}".format(status))
+            client.chat_postEphemeral(channel=channel_id, user=user_id, text= f"Error Generating cleanups Here is the sum count, evaluate and have members update availability. {status}")
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/revert-takedowns', methods=['POST'])
 def reverttakedowns():
+    """Revert Takedowns Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
-        status = Thread(target=revert_takedowns, args=(conn,)).start()
+        Thread(target=revert_takedowns, args=(conn,)).start()
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
 @app.route('/test', methods=['POST'])
 def test():
-    user_id = data.get('user_id')
-    channel_id = data.get("channel_id")
+    """Testing Command"""
     data = client.conversations_create(name="testchannel10", is_private = True)
-    client.conversations_invite(channel=data["channel"]["id"], users=("UCQMZA62E"))
+    client.conversations_invite(channel=data["channel"]["id"], users="UCQMZA62E")
     return Response(), 200
 
 @app.route('/display-takedowns', methods=['POST'])
 def displaytakedowns():
+    """Display Takedowns Slack Command"""
     data = request.form
     user_id = data.get('user_id')
-    channel_id = data.get('channel_id')
-    status = Thread(target=display_takedowns, args=(conn, user_id, client)).start()
+    Thread(target=display_takedowns, args=(conn, user_id, client)).start()
     return Response(), 200
 
 @app.route('/display-cleanups', methods=['POST'])
 def displaycleanups():
+    """Display Cleanups Slack Command"""
     data = request.form
     user_id = data.get('user_id')
-    channel_id = data.get('channel_id')
-    status = Thread(target=display_cleanups, args=(conn, user_id, client)).start()
+    Thread(target=display_cleanups, args=(conn, user_id, client)).start()
     return Response(), 200
 
 @app.route('/admin-form', methods=['POST'])
 def adminform():
+    """Admin Form Slack Command"""
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
-        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=admin_add_form)
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=ADMIN_ADD_FORM)
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
 
+@app.route('/end-semester', methods=['POST'])
+def endsemester():
+    """End Semester Slack Command"""
+    data = request.form
+    user_id = data.get('user_id')
+    if admin_check(conn, user_id):
+        end_semester(conn)
+    return Response(), 200
+
+@app.route('/fines-form', methods=['POST'])
+def finesform():
+    """Fines Form Slack Command"""
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get('channel_id')
+    if admin_check(conn, user_id):
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=FINE_FORM)
+    else:
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
+    return Response(), 200
+
+@app.route('/reconcilliation-form', methods=['POST'])
+def reconcilliationform():
+    """Reconcilliation Form Slack Command"""
+    data = request.form
+    user_id = data.get('user_id')
+    channel_id = data.get('channel_id')
+    if admin_check(conn, user_id):
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Testing", blocks=RECONCILLIATION_FORM)
+    else:
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
+    return Response(), 200
+
+@app.route('/display-fines', methods=['POST'])
+def displayfines():
+    """Display Fines Slack Command"""
+    data = request.form
+    user_id = data.get('user_id')
+    Thread(target=display_fines, args=(conn, user_id, client)).start()
+    return Response(), 200
+
+@app.route('/display-reconcilliations', methods=['POST'])
+def displayreconcilliations():
+    """Display Reconcilliations Slack Command"""
+    data = request.form
+    user_id = data.get('user_id')
+    Thread(target=display_reconcilliations, args=(conn, user_id, client)).start()
+    return Response(), 200
+
+@app.route('/display-naughtylist', methods=['POST'])
+def naughtylist():
+    """Display Naughty List Slack Command"""
+    data = request.form
+    user_id = data.get('user_id')
+    Thread(target=display_naughtylist, args=(conn, user_id, client)).start()
+    return Response(), 200
+
 @app.route('/interactions', methods=['POST'])
 def interactions():
+    """Interactions for all Slack Commands"""
     data = json.loads(request.form.get("payload"))
     action = data["actions"][0]["action_id"]
     if action == "actionId-usersubmit":
@@ -183,24 +253,44 @@ def interactions():
     elif action == "actionId-cleanupsettingssubmit":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
-        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        cleanup_name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
         deck = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["value"]
         townsman = data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"]
-        minimumInHouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
-        minimumPeople = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
-        cleanup = (cleanupName, deck, townsman, minimumInHouse, minimumPeople)
+        minimum_inhouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
+        minimum_people = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
+        cleanup = (cleanup_name, deck, townsman, minimum_inhouse, minimum_people)
         add_cleanup(conn, cleanup)
     elif action == "actionId-cleanupsettingremove":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
-        cleanupName = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
-        remove_cleanup(conn, cleanupName)
+        cleanup_name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        remove_cleanup(conn, cleanup_name)
     elif action == "actionId-adminaddsubmit":
         input_keys = list(data["state"]["values"])
         position = data["state"]["values"][input_keys[0]]["static_select-action"]["selected_option"]["value"]
         name = data["state"]["values"][input_keys[1]]["users_select-action"]["selected_user"]
         admin_add(conn, position, name)
-        requests.post(data["response_url"], json={'delete_original': True, 'text': ''})
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
+    elif action == "actionId-finesubmit":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        person = data["state"]["values"][input_keys[0]]['users_select-action']['selected_user']
+        fine_date = data["state"]["values"][input_keys[1]]['datepicker-action']['selected_date']
+        fine_type = data["state"]["values"][input_keys[2]]['static_select-action']['selected_option']['text']['text']
+        reason = data["state"]["values"][input_keys[3]]['plain_text_input-action']['value']
+        amount = data['state']['values'][input_keys[4]]['plain_text_input-action']['value']
+        fines(conn, person, fine_date, fine_type, reason, amount, slack_id, client)
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
+    elif action == "actionId-reconcilliationsubmit":
+        slack_id = data["user"]["id"]
+        input_keys = list(data["state"]["values"])
+        person = data["state"]["values"][input_keys[0]]['users_select-action']['selected_user']
+        recon_date = data["state"]["values"][input_keys[1]]['datepicker-action']['selected_date']
+        recon_type = data["state"]["values"][input_keys[2]]['static_select-action']['selected_option']['text']['text']
+        notes = data["state"]["values"][input_keys[3]]['plain_text_input-action']['value']
+        amount = data['state']['values'][input_keys[4]]['plain_text_input-action']['value']
+        reconcilliations(conn, person, recon_date, recon_type, notes, amount, slack_id, client)
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     return Response(), 200
 
 if __name__ == "__main__":
