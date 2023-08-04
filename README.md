@@ -10,16 +10,16 @@ A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups a
 7. pip install weaslyprint
 8. sqllite extenstion vscode
 9. ngrok installation
+10. pylint extenstion vscode
 
 Things to Do:
 1. DOCUMENTATION
 2. Edge cases on takedowns
-3. Pylint
-4. Some form of production deployment
-5. Multithread everything
-6. Channel Generation and Deletion
-7. Reset Semester (Delete everything except admin, cleanups_settings, users) LAST
-8. Revert cleanups (Maybe)
+3. Some form of production deployment
+4. Multithread everything
+5. Channel Generation and Deletion
+6. Reset Semester (Delete everything except admin, cleanups_settings, users) LAST
+7. Revert cleanups (Maybe)
 
 Extras:
 1. Trading
