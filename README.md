@@ -16,10 +16,9 @@ Things to Do:
 1. DOCUMENTATION
 2. Edge cases on takedowns
 3. Some form of production deployment
-4. Multithread everything
-5. Channel Generation and Deletion
-6. Reset Semester (Delete everything except admin, cleanups_settings, users) LAST
-7. Revert cleanups (Maybe)
+4. Channel Generation and Deletion
+5. Reset Semester (Delete everything except admin, cleanups_settings, users) LAST
+6. Revert cleanups (Maybe)
 
 Extras:
 1. Trading

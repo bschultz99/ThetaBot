@@ -245,11 +245,11 @@ def interactions():
                 takedowns[8] = 1
             elif day["value"] == "value-FD":
                 takedowns[9] = 1
-        add_user(conn, user, takedowns)
+        Thread(target=add_user, args=(conn, user, takedowns)).start()
     elif action == "actionId-removesubmit":
         input_keys = list(data["state"]["values"])
         slack_id = data["state"]["values"][input_keys[0]]["users_select-action"]["selected_user"]
-        remove_user(conn, slack_id)
+        Thread(target=remove_user, args=(conn, slack_id)).start()
     elif action == "actionId-cleanupsettingssubmit":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
@@ -259,17 +259,17 @@ def interactions():
         minimum_inhouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
         minimum_people = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
         cleanup = (cleanup_name, deck, townsman, minimum_inhouse, minimum_people)
-        add_cleanup(conn, cleanup)
+        Thread(target=add_cleanup, args=(conn, cleanup)).start()
     elif action == "actionId-cleanupsettingremove":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
         cleanup_name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
-        remove_cleanup(conn, cleanup_name)
+        Thread(target=remove_cleanup, args=(conn, cleanup_name)).start()
     elif action == "actionId-adminaddsubmit":
         input_keys = list(data["state"]["values"])
         position = data["state"]["values"][input_keys[0]]["static_select-action"]["selected_option"]["value"]
         name = data["state"]["values"][input_keys[1]]["users_select-action"]["selected_user"]
-        admin_add(conn, position, name)
+        Thread(target=admin_add, args=(conn, position, name)).start()
         requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     elif action == "actionId-finesubmit":
         slack_id = data["user"]["id"]
@@ -279,7 +279,7 @@ def interactions():
         fine_type = data["state"]["values"][input_keys[2]]['static_select-action']['selected_option']['text']['text']
         reason = data["state"]["values"][input_keys[3]]['plain_text_input-action']['value']
         amount = data['state']['values'][input_keys[4]]['plain_text_input-action']['value']
-        fines(conn, person, fine_date, fine_type, reason, amount, slack_id, client)
+        Thread(target=fines, args=(conn, person, fine_date, fine_type, reason, amount, slack_id, client)).start()
         requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     elif action == "actionId-reconcilliationsubmit":
         slack_id = data["user"]["id"]
@@ -289,7 +289,7 @@ def interactions():
         recon_type = data["state"]["values"][input_keys[2]]['static_select-action']['selected_option']['text']['text']
         notes = data["state"]["values"][input_keys[3]]['plain_text_input-action']['value']
         amount = data['state']['values'][input_keys[4]]['plain_text_input-action']['value']
-        reconcilliations(conn, person, recon_date, recon_type, notes, amount, slack_id, client)
+        Thread(target=reconcilliations, args=(conn, person, recon_date, recon_type, notes, amount, slack_id, client)).start()
         requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     return Response(), 200
 

@@ -119,10 +119,10 @@ SELECT u.name, SUM(f.amount) as fines FROM fines f JOIN users u on u.slack_id = 
 
 SELECT u.name, SUM(f.amount) as fines FROM fines f JOIN users u on u.slack_id = f.slack_id GROUP BY u.name ;
 
-DROP TABLE reconcilliation;
+DROP TABLE naughty;
 
 UPDATE naughty SET reconcilliation = 10 WHERE slack_id = 'UAOPZA64E';
 
-UPDATE users SET slack_id = 'UMQE271CZ' WHERE name = 'Skyler';
+UPDATE naughty SET slack_id = 'U02DTE5UUM7' WHERE name = 'Ronan';
 
 SELECT name, fines, reconcilliation, owed from naughty ORDER BY owed DESC;

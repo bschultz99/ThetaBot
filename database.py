@@ -282,18 +282,18 @@ def end_semester(con):
 def fines(con, person, fine_date, fine_type, reason, amount, issuer, client):
     """Fines"""
     cur = con.cursor()
-    if type == 'Cleanup':
+    if fine_type == 'Cleanup':
         missed_cleanups = cur.execute(FINES_CLEANUPS_SUM.format(person)).fetchone()[0]
         amount = 5 * (missed_cleanups + 1)
-    elif type == 'Takedown':
+    elif fine_type == 'Takedown':
         amount = 5
-    elif type == 'Theta Raid':
+    elif fine_type == 'Theta Raid':
         amount = 1 * int(amount)
-    elif type == 'Roll Call':
+    elif fine_type == 'Roll Call':
         amount = 5 * int(amount)
-    elif type == 'Warning':
+    elif fine_type == 'Warning':
         amount = 0
-    elif type == 'Other':
+    elif fine_type == 'Other':
         amount = int(amount)
     fine = (person, reason, fine_date, amount, fine_type, issuer)
     cur.execute(FINES_DATABASE_INSERT, fine)
