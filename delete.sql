@@ -126,3 +126,9 @@ UPDATE naughty SET reconcilliation = 10 WHERE slack_id = 'UAOPZA64E';
 UPDATE naughty SET slack_id = 'U02DTE5UUM7' WHERE name = 'Ronan';
 
 SELECT name, fines, reconcilliation, owed from naughty ORDER BY owed DESC;
+
+UPDATE 'takedowns_2023-04-22' SET assignment = assignment || ', tuesday_lunch' WHERE slack_id = 'UCSDDA64E';
+
+DROP TABLE "takedowns_2023-08-11";
+
+SELECT name FROM sqlite_schema WHERE type = 'table' AND (name NOT LIKE 'users') AND (name NOT LIKE 'admin') AND (name NOT LIKE 'cleanup_settings');

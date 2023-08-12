@@ -181,7 +181,6 @@ def generate_cleanups(con, channel_id, client):
     con.commit()
     cleanup_weekly(CLEANUPS_GENERATE_SELECTOUTPUT.format(today), con, channel_id, client)
 
-
 def generate_takedown(con, channel_id, client):
     """Generate Takedowns"""
     today = date.today()
@@ -210,31 +209,32 @@ def generate_takedown(con, channel_id, client):
         people = cur.execute(TAKEDOWNS_GENERATE_FILL.format(slots[position])).fetchall()
         try:
             summation = tuple(x-y for x, y in zip(summation, people[0][5:]))
+            cur.executescript(TAKEDOWNS_GENERATE_UPDATE.format(people[0][0], people[0][0], today, slots[position], people[0][0]))
         except IndexError:
-            cur.executescript(TAKEDOWNS_GENERATE_ERROR.format(today))
-            return summation
-        cur.executescript(TAKEDOWNS_GENERATE_UPDATE.format(people[0][0], people[0][0], today, slots[position], people[0][0]))
+            unlucky = cur.executescript(TAKEDOWNS_GENERATE_NOMEMBERS.format(slots[position])).fetchall()
+            cur.executescript(TAKEDOWNS_GENERATE_UNLUCKY.format(unlucky[0][0], unlucky[0][0], today, slots[position], unlucky[0][0]))
         try:
             summation = tuple(x-y for x, y in zip(summation, people[1][5:]))
+            cur.executescript(TAKEDOWNS_GENERATE_UPDATE.format(people[1][0], people[1][0], today, slots[position], people[1][0]))
         except IndexError:
-            cur.executescript(TAKEDOWNS_GENERATE_ERROR.format(today))
-            return summation
-        cur.executescript(TAKEDOWNS_GENERATE_UPDATE.format(people[1][0], people[1][0], today, slots[position], people[1][0]))
+            unlucky = cur.executescript(TAKEDOWNS_GENERATE_NOMEMBERS.format(slots[position])).fetchall()
+            cur.executescript(TAKEDOWNS_GENERATE_UNLUCKY.format(unlucky[0][0], unlucky[0][0], today, slots[position], unlucky[0][0]))
         positions[position] = 1
     takedown_break = cur.execute(TAKEDOWNS_GENERATE_REMAINING).fetchall() #Set everyone else on break
-    for i in enumerate(takedown_break):
-        cur.execute(TAKEDOWNS_GENERATE_BREAK.format(today, takedown_break[i][0]))
+    for value in enumerate(takedown_break):
+        cur.execute(TAKEDOWNS_GENERATE_BREAK.format(today, value[0]))
         con.commit()
     cur.execute(TAKEDOWNS_GENERATE_UPDATEUSED) #Reset used column to 0
     con.commit()
     takedown_weekly(TAKEDOWNS_GENERATE_SELECTOUTPUT.format(today), con, channel_id, client)
+
 def revert_takedowns(con):
     """Revert Takedowns"""
     today = date.today()
     cur = con.cursor()
     people = list(cur.execute(TAKEDOWNS_REVERT_SELECT.format(today)).fetchall()) #List brothers who aren't on break
-    for i in enumerate(people):
-        cur.execute(TAKEDOWNS_REVERT_UPDATE.format(people[i][0])) #Revert takedowns database
+    for person in enumerate(people):
+        cur.execute(TAKEDOWNS_REVERT_UPDATE.format(person[0])) #Revert takedowns database
         con.commit()
     cur.execute(TAKEDOWNS_REVERT_WEEK.format(today)) #Revert weekly takedowns generation
     con.commit()
@@ -251,9 +251,9 @@ def smallest(summation, positions):
     """Smallest"""
     small_value = 1000000
     position = 0
-    for i in enumerate(summation):
-        if(small_value > summation[i] and positions[i] == 0):
-            small_value = summation[i]
+    for i, value in enumerate(summation):
+        if(small_value > value and positions[i] == 0):
+            small_value = value
             position = i
     return position
 
@@ -277,7 +277,9 @@ def admin_add(con, position, user_id):
 def end_semester(con):
     """End Semester"""
     cur = con.cursor()
-    return cur
+    tables = cur.execute(DELETE_TABLES_SELECT).fetchall()
+    for table in enumerate(tables):
+        cur.execute(DELETE_TABLES_DROP.format(table))
 
 def fines(con, person, fine_date, fine_type, reason, amount, issuer, client):
     """Fines"""

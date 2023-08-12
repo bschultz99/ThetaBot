@@ -186,6 +186,14 @@ TAKEDOWNS_GENERATE_ERROR = '''
                              UPDATE "takedowns_{}" SET assignment = NULL;
                              COMMIT;
                           '''
+TAKEDOWNS_GENERATE_NOMEMBERS = 'SELECT * FROM "takedowns" WHERE {} = 1 ORDER BY "takedown_count";'
+TAKEDOWNS_GENERATE_UNLUCKY = '''
+                                    BEGIN;
+                                    UPDATE takedowns SET takedown_count = takedown_count + 1 WHERE slack_id = "{}";
+                                    UPDATE takedowns SET used = 1 WHERE slack_id = "{}";
+                                    UPDATE "takedowns_{}" SET assignment = assignment || ", {}" WHERE slack_id = "{}";
+                                    COMMIT;
+                                  '''
 TAKEDOWNS_GENERATE_SELECTOUTPUT = 'SELECT name, assignment FROM "takedowns_{}" ORDER BY assignment ASC;'
 TAKEDOWNS_REVERT_SELECT = 'SELECT slack_id FROM "takedowns_{}" WHERE assignment != "Break";'
 TAKEDOWNS_REVERT_UPDATE = 'UPDATE "takedowns" SET takedown_count = takedown_count - 1 WHERE slack_id = "{}";'
@@ -211,3 +219,6 @@ FINES_DISPLAY_SELECT = 'SELECT u.name, f.reason, f.date, f.amount, f.type, x.nam
 RECONCILLIATIONS_DISPLAY_SELECT = 'SELECT u.name, r.notes, r.date, r.amount, r.type, x.name as issuer FROM reconcilliation r JOIN users u on u.slack_id = r.slack_id JOIN users x on x.slack_id = r.issuer ORDER BY u.name;'
 # Naughty Boy
 NAUGHTY_DISPLAY_SELECT = 'SELECT name, fines, reconcilliation, owed from naughty ORDER BY owed DESC;'
+# Restart Semester
+DELETE_TABLES_SELECT = 'SELECT name FROM sqlite_schema WHERE type = "table" AND (name NOT LIKE "users") AND (name NOT LIKE "admin") AND (name NOT LIKE "cleanup_settings");'
+DELETE_TABLES_DROP = 'DROP {};'
