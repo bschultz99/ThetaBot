@@ -80,7 +80,7 @@ def add_user(con, user, takedowns):
 def remove_user(con, slack_id): #Update SQL to include delete from takedowns
     """Remove User"""
     cur = con.cursor()
-    cur.executescript(USERS_REMOVE_DELETE.format(slack_id, slack_id))
+    cur.executescript(USERS_REMOVE_DELETE.format(slack_id, slack_id, slack_id))
 
 def add_cleanup(con, cleanup_setting):
     """Add Cleanup"""
@@ -268,8 +268,8 @@ def admin_check(con, user_id):
 def admin_add(con, position, user_id):
     """Admin Add"""
     cur = con.cursor()
-    if cur.execute(ADMIN_ADD_SELECT.format(user_id)).fetchall():
-        cur.execute(ADMIN_ADD_UPDATE.format(position, user_id))
+    if cur.execute(ADMIN_ADD_SELECT.format(position)).fetchall():
+        cur.execute(ADMIN_ADD_UPDATE.format(user_id, position))
     else:
         cur.execute(ADMIN_ADD_INSERT, (user_id, position))
     con.commit()
@@ -279,7 +279,10 @@ def end_semester(con):
     cur = con.cursor()
     tables = cur.execute(DELETE_TABLES_SELECT).fetchall()
     for table in enumerate(tables):
-        cur.execute(DELETE_TABLES_DROP.format(table))
+        #print("{}".format(DELETE_TABLES_DROP.format(''.join(table[1]))))
+        cur.execute(DELETE_TABLES_DROP.format(''.join(table[1])))
+    con.commit()
+    startup(con)
 
 def fines(con, person, fine_date, fine_type, reason, amount, issuer, client):
     """Fines"""

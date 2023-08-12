@@ -246,25 +246,29 @@ def interactions():
             elif day["value"] == "value-FD":
                 takedowns[9] = 1
         Thread(target=add_user, args=(conn, user, takedowns)).start()
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     elif action == "actionId-removesubmit":
         input_keys = list(data["state"]["values"])
         slack_id = data["state"]["values"][input_keys[0]]["users_select-action"]["selected_user"]
         Thread(target=remove_user, args=(conn, slack_id)).start()
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     elif action == "actionId-cleanupsettingssubmit":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
         cleanup_name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
         deck = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["value"]
-        townsman = data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"]
+        townsman = 1 if data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"] else 0
         minimum_inhouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
         minimum_people = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
         cleanup = (cleanup_name, deck, townsman, minimum_inhouse, minimum_people)
         Thread(target=add_cleanup, args=(conn, cleanup)).start()
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     elif action == "actionId-cleanupsettingremove":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
         cleanup_name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
         Thread(target=remove_cleanup, args=(conn, cleanup_name)).start()
+        requests.post(data["response_url"], json={'delete_original': True, 'text': ''}, timeout=10)
     elif action == "actionId-adminaddsubmit":
         input_keys = list(data["state"]["values"])
         position = data["state"]["values"][input_keys[0]]["static_select-action"]["selected_option"]["value"]

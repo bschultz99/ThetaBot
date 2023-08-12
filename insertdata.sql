@@ -7,7 +7,6 @@ INSERT into takedowns VALUES
 
 INSERT INTO users VALUES
 ("UCQMZA22E", "Anthony A", "In-House 3"),
-("UCQMZA63E", "Fran", "In-House 2"),
 ("UCQMZG64E", "Derek", "In-House 3"),
 ("UCQMAA62E", "Kevin", "In-House 3"),
 ("UCGMZB61E", "Huy C", "In-House 2"),
@@ -15,37 +14,27 @@ INSERT INTO users VALUES
 ("UWEMZA34E", "John", "In-House 2"),
 ("GFQMZA62E", "Charles", "In-House 2"),
 ("UCQBJH63E", "Dylan", "In-House 3"),
-("UHMMZA63E", "Cameron", "In-House 3"),
 ("UAOPZA64E", "Ronald", "In-House 3"),
-("UCEDZA62E", "Jovany", "In-House 3"),
-("USSMZA63E", "Aleks", "In-House 2"),
 ("UWEMZA64E", "Marshall", "In-House 3"),
 ("UCHMZA63E", "Anthony N", "In-House 2"),
 ("UCQMZ253E", "Zawad", "In-House 3"),
 ("UCQMZA2FE", "Joel", "In-House 2"),
 ("UCQMZ8G4E", "Ronan", "In-House 2"),
-("EWEMAA64E", "Remy", "In-House 2"),
-("UCHDZA64E", "Arsh", "In-House 3"),
 ("UCE23A64E", "Thupten", "In-House 2"),
-("UCQGZASDE", "Anudeep", "Townsman"),
-("UCQQ4A64E", "Eddy", "Townsman"),
-("UCQMOA6HB", "Sean", "Townsman"),
-("UCQMZL34E", "David", "Townsman"),
-("UCSDZQ64E", "Patrick", "Townsman"),
+("UCSDZQ64E", "Patrick", "In-House 3"),
+("UCSDZQ64E", "Kaleb", "In-House 3"),
+("UCSDZQ64E", "Khoi, "In-House 2"),
+("UCSDZQ64E", "Phu", "In-House 2"),
+("UCSDZD34E", "Anudeep", "Townsman"),
+("UCSDZD34E", "Eddy", "Townsman"),
 ("UCSDZD34E", "Jeremiah", "Townsman"),
 ("UCDDZA64E", "Ricky", "Townsman"),
 ("UASDZA64E", "Skyler", "Townsman"),
-("UFSDZA64E", "Huy N", "Townsman"),
 ("UCGDZA64E", "Heze", "Townsman"),
 ("UCSDZL64E", "Jason", "Townsman"),
-("UCSDDA64E", "Bryant", "Townsman"),
-("UCSEZA64E", "Roberto", "Townsman"),
+("UCSDDA64E", "Khang", "Townsman"),
+("UCSEZA64E", "Jovany", "Townsman"),
 ("UCSDAA64E", "Zach", "Townsman");
-
-INSERT INTO admin VALUES
-("UCQMZA62E", "Bryant"),
-("UCGDZA64E", "Heze"),
-("UWEMZA34E", "John");
 
 UPDATE 'takedowns' SET 'takedown_count' = 12, 'monday_lunch' = 0, 'monday_dinner' = 0, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 0, 'wednesday_dinner' = 1, 'thursday_lunch' = 1, 'thursday_dinner' = 1, 'friday_lunch' = 1, 'friday_dinner' = 1 WHERE name = 'Anthony A';
 UPDATE 'takedowns' SET 'takedown_count' = 12, 'monday_lunch' = 1, 'monday_dinner' = 1, 'tuesday_lunch' = 0, 'tuesday_dinner' = 0, 'wednesday_lunch' = 1, 'wednesday_dinner' = 1, 'thursday_lunch' = 0, 'thursday_dinner' = 0, 'friday_lunch' = 0, 'friday_dinner' = 0 WHERE name = 'Fran';

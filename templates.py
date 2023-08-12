@@ -332,12 +332,54 @@ ADMIN_ADD_FORM = [
 						},
 						"value": "Theta-1"
 					},
+                    {
+						"text": {
+							"type": "plain_text",
+							"text": "Theta 2"
+						},
+						"value": "Theta-2"
+					},
 					{
 						"text": {
 							"type": "plain_text",
 							"text": "Theta 3"
 						},
 						"value": "Theta-3"
+					},
+                     {
+						"text": {
+							"type": "plain_text",
+							"text": "Alpha"
+						},
+						"value": "Alpha"
+					},
+                     {
+						"text": {
+							"type": "plain_text",
+							"text": "Beta"
+						},
+						"value": "Beta"
+					},
+                     {
+						"text": {
+							"type": "plain_text",
+							"text": "Sigma"
+						},
+						"value": "Sigma"
+					},
+                     {
+						"text": {
+							"type": "plain_text",
+							"text": "Tau"
+						},
+						"value": "Tau"
+					},
+                     {
+						"text": {
+							"type": "plain_text",
+							"text": "Chi"
+						},
+						"value": "Chi"
 					},
 					{
 						"text": {
@@ -625,10 +667,10 @@ RECONCILLIATION_FORM = [
 		}
 ]
 
-HELP_MESSAGE = """Welcome to the takedown bot. These are the following features:
+HELP_MESSAGE = """Welcome to the ThetaBot. These are the following features:
 1. /help - Gives information on how the slack commands work.
-2. /userform - Fill this out to update your name, membership, and takedown availability.
-3. /cleanupsettings - ADMIN - Change cleanups settings i.e. membership, minimum people, etc.
+2. /user-form - Fill this out to update your name, membership, and takedown availability.
+3. /cleanup-settings - ADMIN - Change cleanups settings i.e. membership, minimum people, etc.
 4. /removeuser - ADMIN - Remove a user from the user, cleanups, and takedown database.
 5. /generate-cleanup-database - ADMIN - Generate the cleanup database by adding the cleanups and setting default values to 0.
 6. /generate-cleanups - ADMIN - Generates the weekly cleanups.
@@ -637,6 +679,12 @@ HELP_MESSAGE = """Welcome to the takedown bot. These are the following features:
 9. /display-takedowns - Display the takedown database.
 10. /display-cleanups - Display the cleanups database.
 11. /admin-form - ADMIN - Add admins to the system.
+12. /fines-form - ADMIN- Submit fines for members.
+13. /reconcilliation-form - ADMIN - Use to reconcille fines of members.
+14. /display-fines - Display the fines database.
+15. /display-reconcilliation - Display the reconcilliation Database.
+16. /display-naughtylist - Displays the fines, reconcilliations, and how much members owe.
+17. /end-semester - ADMIN - Restarts the semester.
 """
 
 FINE_MESSAGE= """ You have been fined!

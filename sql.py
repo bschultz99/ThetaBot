@@ -105,6 +105,7 @@ USERS_REMOVE_DELETE = '''
                         BEGIN;
                         DELETE FROM users WHERE slack_id = "{}";
                         DELETE FROM cleanups WHERE slack_id = "{}";
+                        DELETE FROM takedowns WHERE slack_id = "{}";
                         COMMIT;
                       '''
 USERS_DATABASE_SELECT_NAUGHTY = 'SELECT slack_id FROM naughty WHERE slack_id = "{}";'
@@ -200,9 +201,9 @@ TAKEDOWNS_REVERT_UPDATE = 'UPDATE "takedowns" SET takedown_count = takedown_coun
 TAKEDOWNS_REVERT_WEEK = 'UPDATE "takedowns_{}" SET assignment = "NULL";'
 # Admin
 ADMIN_SELECT = 'SELECT * FROM admin where slack_id = "{}";'
-ADMIN_ADD_SELECT = 'SELECT slack_id FROM admin WHERE slack_id = "{}";'
+ADMIN_ADD_SELECT = 'SELECT position FROM admin WHERE position = "{}";'
 ADMIN_ADD_INSERT = 'INSERT INTO admin(slack_id, position) VALUES(?,?);'
-ADMIN_ADD_UPDATE = 'UPDATE admin SET position = "{}" WHERE slack_id = "{}";'
+ADMIN_ADD_UPDATE = 'UPDATE admin SET slack_id = "{}" WHERE position = "{}";'
 # Takedowns Display
 TAKEDOWNS_DISPLAY_SELECT = 'SELECT name, membership, takedown_count, monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner FROM takedowns;'
 # Cleanups Display
@@ -221,4 +222,4 @@ RECONCILLIATIONS_DISPLAY_SELECT = 'SELECT u.name, r.notes, r.date, r.amount, r.t
 NAUGHTY_DISPLAY_SELECT = 'SELECT name, fines, reconcilliation, owed from naughty ORDER BY owed DESC;'
 # Restart Semester
 DELETE_TABLES_SELECT = 'SELECT name FROM sqlite_schema WHERE type = "table" AND (name NOT LIKE "users") AND (name NOT LIKE "admin") AND (name NOT LIKE "cleanup_settings");'
-DELETE_TABLES_DROP = 'DROP {};'
+DELETE_TABLES_DROP = 'DROP TABLE "{}";'
