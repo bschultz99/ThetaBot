@@ -14,28 +14,24 @@ A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups a
 
 # Things to Do:
 1. DOCUMENTATION
-2. Edge cases on takedowns (Wating on tests)
 3. Some form of production deployment
-4. Channel Generation and Deletion
 
 # Extras:
 1. Trading
 2. Voting
 3. Service Hours
 4. Revert cleanups and takedowns
-
-
-# Commands to Verify:
-2. Generate Takedowns
-7. generate cleanups
-18. end semester
+5. Look at how new thetas join cleanups/takedowns channels
+6. Cleanup assignment
 
 # Command Documentation:
 1. Help
+2. Generate Takedowns
 3. User-form
 4. cleanup settings
 5. generate cleanups database
 6. remove user
+7. generate cleanups
 9. revert takedowns
 10. display takedowns
 11. display cleanups
@@ -45,3 +41,4 @@ A slack app for Alpha Epsilon Chapter of Phi Kappa Sigma for managing cleanups a
 15. display fines
 16. display reconcilliation
 17. display naughty list
+18. end semester

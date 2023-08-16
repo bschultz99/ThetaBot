@@ -11,7 +11,7 @@ from slackeventsapi import SlackEventAdapter
 import slack
 import requests
 from templates import USER_FORM, REMOVE_USER_FORM, CLEANUP_SETTINGS_FORM, ADMIN_ADD_FORM, FINE_FORM, RECONCILLIATION_FORM, HELP_MESSAGE
-from database import admin_check, generate_cleanups, generate_cleanups_database, generate_takedown, revert_takedowns, display_cleanups, display_takedowns, end_semester, display_fines, display_reconcilliations, display_naughtylist, add_user, remove_user, add_cleanup, remove_cleanup, admin_add, fines, reconcilliations, create_connection, startup
+from database import admin_check, generate_cleanups, generate_cleanups_database, generate_takedown, display_cleanups, display_takedowns, end_semester, display_fines, display_reconcilliations, display_naughtylist, add_user, remove_user, add_cleanup, remove_cleanup, admin_add, fines, reconcilliations, create_connection, startup
 
 
 
@@ -88,7 +88,7 @@ def generatecleanups():
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
-        Thread(target=generate_cleanups, args=(conn, channel_id, client)).start()
+        Thread(target=generate_cleanups, args=(conn, channel_id, client, os.environ['SLACK_BOT_MEMBER_ID'])).start()
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
@@ -100,7 +100,7 @@ def generatetakedowns():
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
-        status = Thread(target=generate_takedown, args=(conn, channel_id, client)).start()
+        status = Thread(target=generate_takedown, args=(conn, channel_id, client, os.environ['SLACK_BOT_MEMBER_ID'])).start()
         if status:
             client.chat_postEphemeral(channel=channel_id, user=user_id, text= f"Error Generating cleanups Here is the sum count, evaluate and have members update availability. {status}")
     else:
@@ -114,7 +114,8 @@ def reverttakedowns():
     user_id = data.get('user_id')
     channel_id = data.get("channel_id")
     if admin_check(conn, user_id):
-        Thread(target=revert_takedowns, args=(conn,)).start()
+        client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
+        #Thread(target=revert_takedowns, args=(conn,)).start()
     else:
         client.chat_postEphemeral(channel=channel_id, user=user_id, text="Fuck You. You Shouldn't be here. $5 Fine.")
     return Response(), 200
@@ -122,8 +123,13 @@ def reverttakedowns():
 @app.route('/test', methods=['POST'])
 def test():
     """Testing Command"""
-    data = client.conversations_create(name="testchannel10", is_private = True)
-    client.conversations_invite(channel=data["channel"]["id"], users="UCQMZA62E")
+    #data = client.conversations_create(name="testchannel11", is_private = True)
+    try:
+        client.conversations_invite(channel="C05NA6NMX88", users="UCQMZA62E")
+    except slack.errors.SlackApiError:
+        print("Oh no i dont care")
+    #members = client.conversations_members(channel='C05ML6VEKV1')
+    #print(members['members'])#.remove(os.environ['SLACK_BOT_MEMBER_ID']))
     return Response(), 200
 
 @app.route('/display-takedowns', methods=['POST'])
@@ -257,7 +263,7 @@ def interactions():
         input_keys = list(data["state"]["values"])
         cleanup_name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
         deck = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["value"]
-        townsman = 1 if data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"] else 0
+        townsman = 1 if data["state"]["values"][input_keys[2]]["radio_buttons-action"]["selected_option"]["value"] == 'True' else 0
         minimum_inhouse = data["state"]["values"][input_keys[3]]["plain_text_input-action"]["value"]
         minimum_people = data["state"]["values"][input_keys[4]]["plain_text_input-action"]["value"]
         cleanup = (cleanup_name, deck, townsman, minimum_inhouse, minimum_people)

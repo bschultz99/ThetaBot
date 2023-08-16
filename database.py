@@ -3,9 +3,10 @@
 import sqlite3
 from sqlite3 import Error
 from datetime import date
+import slack
 from sql import *
 from display import cleanup_weekly, takedown_weekly, takedowns_display, cleanups_display, fines_display, reconcilliations_display, naughtylist_display
-from templates import FINE_MESSAGE, RECONCILLIATION_MESSAGE
+from templates import FINE_MESSAGE, RECONCILLIATION_MESSAGE, TAKEDOWN_MESSAGE, CLEANUP_MESSAGE
 
 #Creates the connection with the database file
 def create_connection(db_file):
@@ -39,6 +40,8 @@ def startup(con):
     create_table(con, FINES_STARTUP_TABLE)
     create_table(con, RECONCILLIATION_STARTUP_TABLE)
     create_table(con, NAUGHTY_STARTUP_TABLE)
+    create_table(con, CLEANUPCHANNELS_STARTUP_TABLE)
+    create_table(con, TAKEDOWNCHANNELS_STARTUP_TABLE)
     try:
         cur.executescript(CLEANUPS_STARTUP_ALTER)
     except Error as error:
@@ -51,7 +54,6 @@ def startup(con):
         cur.executescript(NAUGHTY_STARTUP_ALTER)
     except Error as error:
         print(error)
-
 def add_user(con, user, takedowns):
     """Add user"""
     cur = con.cursor()
@@ -107,7 +109,7 @@ def generate_cleanups_database(con):
     except Error as error:
         print(error)
 
-def generate_cleanups(con, channel_id, client):
+def generate_cleanups(con, channel_id, client, bot):
     """Generate Cleanups"""
     today = date.today()
     cur = con.cursor()
@@ -180,8 +182,50 @@ def generate_cleanups(con, channel_id, client):
     cur.execute(CLEANUPS_GENERATE_UPDATEUSED) #Reset used column to 0
     con.commit()
     cleanup_weekly(CLEANUPS_GENERATE_SELECTOUTPUT.format(today), con, channel_id, client)
+    verify = cur.execute(CLEANUPS_CHANNEL_SELECT).fetchall()
+    admin = cur.execute(CLEANUPS_CHANNEL_ADMIN).fetchall()
+    if not verify or verify[0][1] is None: #Generate Channels
+        cur.executescript(CLEANUPSCHANNELS_DELETE_TABLE)
+        cleanups = cur.execute(CLEANUPS_DATABASE_SELECT).fetchall()
+        for cleanup in cleanups:
+            cleanup = cleanup[0].replace(' ', '_').replace('/', '_').replace('+', '_').lower()
+            cur.execute(CLEANUPSCHANNELS_INSERT_TABLE.format(cleanup))
+            con.commit()
+        verify = cur.execute(CLEANUPS_CHANNEL_SELECT).fetchall()
+        for channel in enumerate(verify):
+            data = client.conversations_create(name=channel[1][0], is_private = True)
+            client.conversations_invite(channel=data["channel"]["id"], users=[admin[0][0],admin[1][0]])
+            cur.execute(CLEANUPS_CHANNEL_UPDATE.format(data["channel"]["id"], channel[1][0]))
+            con.commit()
+    else: #Kick previous members
+        for channel in enumerate(verify):
+            members = client.conversations_members(channel=channel[1][1])
+            for member in enumerate(members['members']):
+                if member[1] == bot or member[1] == admin[0][0] or member[1] == admin[1][0]:
+                    print(member[1])
+                else:
+                    client.conversations_kick(channel=channel[1][1], user=member[1])
+    #Invite people to those channels
+    members = cur.execute(CLEANUPS_CHANNEL_MEMBERS.format(today)).fetchall()
+    verify = cur.execute(CLEANUPS_CHANNEL_SELECT).fetchall()
+    for member in enumerate(members):
+        slack_id = member[1][0]
+        assignment = member[1][1].replace(' ', '_').replace('/', '_').replace('+', '_').lower()
+        channel_id = (cur.execute(CLEANUPS_CHANNEL_TASK.format(assignment.strip())).fetchone())
+        try:
+            client.conversations_invite(channel=(channel_id[0]) , users=slack_id)
+        except slack.errors.SlackApiError:
+            print("Oh no i dont care")
+        print("ADD {} to {} on channel {}".format(slack_id, assignment, (channel_id[0])))
+    #Send Message
+    theta3 = cur.execute(CLEANUPS_CHANNEL_THETA).fetchone()
+    captains = cur.execute(CLEANUPS_CHANNEL_CAPTAIN.format(today)).fetchall()
+    for channel in enumerate(verify):
+        for captain in captains:
+            if captain[1].replace(' ', '_').replace('/', '_').replace('+', '_').lower() == channel[1][0]:
+                client.chat_postMessage(channel=channel[1][1], text=CLEANUP_MESSAGE.format(today, channel[1][0], captain[0], (theta3[0])))
 
-def generate_takedown(con, channel_id, client):
+def generate_takedown(con, channel_id, client, bot):
     """Generate Takedowns"""
     today = date.today()
     cur = con.cursor()
@@ -211,13 +255,13 @@ def generate_takedown(con, channel_id, client):
             summation = tuple(x-y for x, y in zip(summation, people[0][5:]))
             cur.executescript(TAKEDOWNS_GENERATE_UPDATE.format(people[0][0], people[0][0], today, slots[position], people[0][0]))
         except IndexError:
-            unlucky = cur.executescript(TAKEDOWNS_GENERATE_NOMEMBERS.format(slots[position])).fetchall()
+            unlucky = cur.execute(TAKEDOWNS_GENERATE_NOMEMBERS.format(slots[position])).fetchall()
             cur.executescript(TAKEDOWNS_GENERATE_UNLUCKY.format(unlucky[0][0], unlucky[0][0], today, slots[position], unlucky[0][0]))
         try:
             summation = tuple(x-y for x, y in zip(summation, people[1][5:]))
             cur.executescript(TAKEDOWNS_GENERATE_UPDATE.format(people[1][0], people[1][0], today, slots[position], people[1][0]))
         except IndexError:
-            unlucky = cur.executescript(TAKEDOWNS_GENERATE_NOMEMBERS.format(slots[position])).fetchall()
+            unlucky = cur.execute(TAKEDOWNS_GENERATE_NOMEMBERS.format(slots[position])).fetchall()
             cur.executescript(TAKEDOWNS_GENERATE_UNLUCKY.format(unlucky[0][0], unlucky[0][0], today, slots[position], unlucky[0][0]))
         positions[position] = 1
     takedown_break = cur.execute(TAKEDOWNS_GENERATE_REMAINING).fetchall() #Set everyone else on break
@@ -227,7 +271,42 @@ def generate_takedown(con, channel_id, client):
     cur.execute(TAKEDOWNS_GENERATE_UPDATEUSED) #Reset used column to 0
     con.commit()
     takedown_weekly(TAKEDOWNS_GENERATE_SELECTOUTPUT.format(today), con, channel_id, client)
-
+    verify = cur.execute(TAKEDOWN_CHANNEL_SELECT).fetchall()
+    admin = cur.execute(TAKEDOWN_CHANNEL_ADMIN).fetchall()
+    if not verify or verify[0][1] is None: #Generate Channels
+        cur.executescript(TAKEDOWNCHANNELS_INSERT_TABLE)
+        verify = cur.execute(TAKEDOWN_CHANNEL_SELECT).fetchall()
+        for channel in enumerate(verify):
+            data = client.conversations_create(name=channel[1][0], is_private = True)
+            client.conversations_invite(channel=data["channel"]["id"], users=[admin[0][0],admin[1][0]])
+            cur.execute(TAKEDOWN_CHANNEL_UPDATE.format(data["channel"]["id"], channel[1][0]))
+            con.commit()
+    else: #Kick previous members
+        for channel in enumerate(verify):
+            members = client.conversations_members(channel=channel[1][1])
+            for member in enumerate(members['members']):
+                if member[1] == bot or member[1] == admin[0][0] or member[1] == admin[1][0]:
+                    print(member[1])
+                else:
+                    client.conversations_kick(channel=channel[1][1], user=member[1])
+    #Invite people to those channels
+    members = cur.execute(TAKEDOWN_CHANNEL_MEMBERS.format(today)).fetchall()
+    verify = cur.execute(TAKEDOWN_CHANNEL_SELECT).fetchall()
+    for member in enumerate(members):
+        slack_id = member[1][0]
+        if member[1][1] is None:
+            continue
+        for assignment in member[1][1].split(","):
+            try:
+                channel_id = (cur.execute(TAKEDOWN_CHANNEL_TASK.format(assignment.strip())).fetchone())
+                client.conversations_invite(channel=(channel_id[0]) , users=slack_id)
+                print("ADD {} to {} on channel {}".format(slack_id, assignment, (channel_id[0])))
+            except slack.errors.SlackApiError:
+                print("Oh no i dont care")
+    #Send Message
+    theta1 = cur.execute(TAKEDOWN_CHANNEL_THETA).fetchone()
+    for channel in enumerate(verify):
+        client.chat_postMessage(channel=channel[1][1], text=TAKEDOWN_MESSAGE.format(today, channel[1][0], (theta1[0])))
 def revert_takedowns(con):
     """Revert Takedowns"""
     today = date.today()

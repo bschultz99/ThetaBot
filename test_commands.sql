@@ -59,6 +59,15 @@ SELECT * FROM "takedowns_2023-01-12" ORDER BY assignment ASC;
 
 UPDATE takedowns SET takedown_count = 0;
 UPDATE takedowns SET used = 0;
+
+DROP TABLE "takedowns_2023-08-12";
+
+SELECT * FROM "takedowns" WHERE "friday_lunch" = 1 ORDER BY "takedown_count" DESC;
+SELECT * FROM "takedowns" WHERE "friday_lunch" = 1 ORDER BY "takedown_count" ASC;
+
+
+
+
 UPDATE "takedowns_2023-01-15" SET assignment = "NULL";
 
 SELECT * FROM "takedowns" WHERE used = 0;
@@ -76,7 +85,7 @@ SELECT name, membership, takedown_count, monday_lunch, monday_dinner, tuesday_lu
 
 UPDATE "admin" SET position = "Owner" WHERE name = "Bryant";
 
-DELETE FROM admin WHERE slack_id = 'UWEMZA34E';
+DELETE FROM admin WHERE slack_id = 'UMQE271CZ';
 
 UPDATE cleanups SET captainCount = captainCount + 1 WHERE name = 'Sean';
 UPDATE cleanups SET '1 Deck' = '1 Deck' + 1 WHERE name = 'Zach';
@@ -133,4 +142,23 @@ DROP TABLE "takedowns_2023-08-11";
 
 SELECT name FROM sqlite_schema WHERE type = 'table' AND (name NOT LIKE 'users') AND (name NOT LIKE 'admin') AND (name NOT LIKE 'cleanup_settings');
 
-DROP "takedowns_2023-08-11";
+DROP TABLE "users";
+
+DELETE FROM takedown_channels;
+
+UPDATE cleanup_settings SET minimum_people = 7 WHERE cleanup_id = "Kitchen";
+SELECT channel_id FROM takedown_channels LIMIT 1;
+
+SELECT slack_id, assignment FROM "takedowns_2023-08-13";
+SELECT slack_id FROM admin WHERE position = 'Owner' OR position = 'Theta-1';
+
+SELECT u.name FROM users u join admin a on u.slack_id = a.slack_id WHERE position = 'Theta-1';
+
+SELECT cleanup_id from cleanup_settings;
+
+DELETE FROM cleanup_channels;
+
+SELECT name, cleanup FROM "cleanups_2023-08-13" WHERE captain = 1;
+DROP TABLE "cleanups_2023-08-15";
+
+SELECT slack_id, assignment FROM "takedowns_2023-08-15";

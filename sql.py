@@ -79,6 +79,39 @@ NAUGHTY_STARTUP_ALTER = '''
                             ALTER TABLE naughty ADD COLUMN owed integer GENERATED ALWAYS AS (fines-reconcilliation);
                             COMMIT;
                           '''
+CLEANUPCHANNELS_STARTUP_TABLE = '''
+                        CREATE TABLE IF NOT EXISTS cleanup_channels (
+                            name text PRIMARY KEY NOT NULL,
+                            channel_id text
+                        );
+                      '''
+TAKEDOWNCHANNELS_STARTUP_TABLE = '''
+                        CREATE TABLE IF NOT EXISTS takedown_channels (
+                            name text PRIMARY KEY NOT NULL,
+                            channel_id text
+                        );
+                      '''
+TAKEDOWNCHANNELS_INSERT_TABLE = '''
+                                    BEGIN;
+                                    DELETE FROM takedown_channels;
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('monday_lunch', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('monday_dinner', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('tuesday_lunch', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('tuesday_dinner', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('wednesday_lunch', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('wednesday_dinner', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('thursday_lunch', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('thursday_dinner', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('friday_lunch', NULL);
+                                    INSERT INTO takedown_channels(name, channel_id) VALUES('friday_dinner', NULL);
+                                    COMMIT;
+                                '''
+CLEANUPSCHANNELS_DELETE_TABLE = '''
+                                    BEGIN;
+                                    DELETE FROM cleanup_channels;
+                                    COMMIT;
+                                '''
+CLEANUPSCHANNELS_INSERT_TABLE = 'INSERT INTO cleanup_channels(name, channel_id) VALUES("{}", NULL);'
 #User
 USERS_ADD_SELECT = 'SELECT slack_id FROM users WHERE slack_id = "{}";'
 USERS_ADD_INSERT = 'INSERT INTO users(slack_id, name, membership) VALUES(?,?,?);'
@@ -187,7 +220,7 @@ TAKEDOWNS_GENERATE_ERROR = '''
                              UPDATE "takedowns_{}" SET assignment = NULL;
                              COMMIT;
                           '''
-TAKEDOWNS_GENERATE_NOMEMBERS = 'SELECT * FROM "takedowns" WHERE {} = 1 ORDER BY "takedown_count";'
+TAKEDOWNS_GENERATE_NOMEMBERS = 'SELECT * FROM "takedowns" WHERE "{}" = 1 ORDER BY "takedown_count" ASC;'
 TAKEDOWNS_GENERATE_UNLUCKY = '''
                                     BEGIN;
                                     UPDATE takedowns SET takedown_count = takedown_count + 1 WHERE slack_id = "{}";
@@ -221,5 +254,20 @@ RECONCILLIATIONS_DISPLAY_SELECT = 'SELECT u.name, r.notes, r.date, r.amount, r.t
 # Naughty Boy
 NAUGHTY_DISPLAY_SELECT = 'SELECT name, fines, reconcilliation, owed from naughty ORDER BY owed DESC;'
 # Restart Semester
-DELETE_TABLES_SELECT = 'SELECT name FROM sqlite_schema WHERE type = "table" AND (name NOT LIKE "users") AND (name NOT LIKE "admin") AND (name NOT LIKE "cleanup_settings");'
+DELETE_TABLES_SELECT = 'SELECT name FROM sqlite_schema WHERE type = "table" AND (name NOT LIKE "users") AND (name NOT LIKE "admin") AND (name NOT LIKE "cleanup_settings") AND (name NOT LIKE "takedown_channels") AND (name NOT LIKE "cleanups_channels");'
 DELETE_TABLES_DROP = 'DROP TABLE "{}";'
+# CHANNEL GENERATION TAKEDOWNS
+TAKEDOWN_CHANNEL_SELECT = 'SELECT * FROM takedown_channels;'
+TAKEDOWN_CHANNEL_UPDATE = 'UPDATE takedown_channels SET channel_id = "{}" WHERE name = "{}";'
+TAKEDOWN_CHANNEL_MEMBERS = 'SELECT slack_id, assignment FROM "takedowns_{}";'
+TAKEDOWN_CHANNEL_TASK = 'SELECT channel_id FROM takedown_channels WHERE name = "{}";'
+TAKEDOWN_CHANNEL_ADMIN = 'SELECT slack_id FROM admin WHERE position = "Owner" OR position = "Theta-1";'
+TAKEDOWN_CHANNEL_THETA = 'SELECT u.name FROM users u join admin a on u.slack_id = a.slack_id WHERE position = "Theta-1";'
+# CHANNEL GENERATION CLEANUPS
+CLEANUPS_CHANNEL_SELECT = 'SELECT * FROM cleanup_channels;'
+CLEANUPS_CHANNEL_UPDATE = 'UPDATE cleanup_channels SET channel_id = "{}" WHERE name = "{}";'
+CLEANUPS_CHANNEL_MEMBERS = 'SELECT slack_id, cleanup FROM "cleanups_{}";'
+CLEANUPS_CHANNEL_TASK = 'SELECT channel_id FROM cleanup_channels WHERE name = "{}";'
+CLEANUPS_CHANNEL_ADMIN = 'SELECT slack_id FROM admin WHERE position = "Owner" OR position = "Theta-3";'
+CLEANUPS_CHANNEL_THETA = 'SELECT u.name FROM users u join admin a on u.slack_id = a.slack_id WHERE position = "Theta-3";'
+CLEANUPS_CHANNEL_CAPTAIN = 'SELECT name, cleanup FROM "cleanups_{}" WHERE captain = 1;'
