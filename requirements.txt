@@ -6,3 +6,5 @@ requests==2.31.0
 slackclient==2.9.4
 slackeventsapi==3.0.1
 weasyprint==59.0
+cffi==1.15.1
+Brotli==1.0.9
