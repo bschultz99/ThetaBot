@@ -22,7 +22,7 @@ dbus-python==1.2.18
 dill==0.3.6
 distro==1.7.0
 docutils==0.20.1
-duplicity==0.8.21
+duplicity==2.0.2
 fasteners==0.14.1
 Flask==2.3.2
 fonttools==4.40.0
