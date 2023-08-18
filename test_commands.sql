@@ -152,7 +152,7 @@ SELECT channel_id FROM takedown_channels LIMIT 1;
 SELECT slack_id, assignment FROM "takedowns_2023-08-13";
 SELECT slack_id FROM admin WHERE position = 'Owner' OR position = 'Theta-1';
 
-SELECT u.name FROM users u join admin a on u.slack_id = a.slack_id WHERE position = 'Theta-1';
+SELECT u.name FROM users u join admin a on u.slack_id = a.slack_id WHERE position = 'Theta-3';
 
 SELECT cleanup_id from cleanup_settings;
 
