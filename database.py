@@ -1,6 +1,6 @@
 # pylint: disable=line-too-long, wildcard-import
 """Database"""
-import mysql.connector
+import sqlite3
 from sqlite3 import Error
 from datetime import date
 import slack
@@ -9,19 +9,12 @@ from display import cleanup_weekly, takedown_weekly, takedowns_display, cleanups
 from templates import FINE_MESSAGE, RECONCILLIATION_MESSAGE, TAKEDOWN_MESSAGE, CLEANUP_MESSAGE
 
 #Creates the connection with the database file
-def create_connection():
+def create_connection(db_file):
     """Create Connection"""
     con = None
     try:
         #Check_same_thread is set to false to allow multiple threads to connect to the db
-        con = mysql.connector.connect(
-            host ="containers-us-west-85.railway.app",
-            user = "root",
-            passwd = "q7xcSYPa7WBzWcWMm2J3",
-            database = "railway",
-            port="6799"
-            )
-        # check_same_thread=False
+        con = sqlite3.connect(db_file, check_same_thread=False)
         return con
     except Error as error:
         print(error)
