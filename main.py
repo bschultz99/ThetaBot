@@ -304,9 +304,6 @@ def interactions():
     return Response(), 200
 
 if __name__ == "__main__":
-    conn = create_connection("./thetabot.db")
-    if conn is not None:
-        startup(conn)
-    else:
-        print("Welp Fuck")
+    conn = create_connection()
+    startup(conn)
     app.run(host='0.0.0.0', port=8080)
