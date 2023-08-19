@@ -1,68 +1,56 @@
 # pylint: disable=line-too-long
 """PDF Exporter"""
 import pandas as pd
-import pdfkit
-
-options = {
-    'page-size': 'A1',
-    'margin-top': '0.75in',
-    'margin-right': '0.75in',
-    'margin-bottom': '0.75in',
-    'margin-left': '0.75in',
-    'encoding': "UTF-8",
-    'no-outline': None
-}
-
-
-
+import weasyprint
+from weasyprint import CSS
 
 def cleanup_weekly(query, con, channel_id, client):
     """Generates Weekly Cleanups PDF"""
     data_frame = pd.read_sql_query(query, con)
     to_html_pretty(data_frame, filename='./reports/weekly_out.html', title='Cleanups')
-    pdfkit.from_file('./reports/weekly_out.html','./reports/weekly_cleanups.pdf', options=options)
+    weasyprint.HTML('./reports/weekly_out.html').write_pdf('./reports/weekly_cleanups.pdf')
     client.files_upload(channels=channel_id, inital_comment="Gabba Gool", file='./reports/weekly_cleanups.pdf')
 
 def takedown_weekly(query, con, channel_id, client):
     """Generates Weekly Takedown PDF"""
     data_frame = pd.read_sql_query(query, con)
     to_html_pretty(data_frame, filename='./reports/weekly_takedown_out.html', title='Takedowns')
-    pdfkit.from_file('./reports/weekly_takedown_out.html','./reports/weekly_takedowns.pdf', options=options)
+    weasyprint.HTML('./reports/weekly_takedown_out.html').write_pdf(target='./reports/weekly_takedowns.pdf')
     client.files_upload(channels=channel_id, inital_comment="Gabba Gool", file='./reports/weekly_takedowns.pdf')
 
 def takedowns_display(query, con, user_id, client):
     """Generates Takedown Database PDF"""
     data_frame = pd.read_sql_query(query, con)
     to_html_pretty(data_frame, filename='./reports/takedowns_display_out.html', title='Takedowns Database')
-    pdfkit.from_file('./reports/takedowns_display_out.html','./reports/takedowns_display_out.pdf', options=options)
+    weasyprint.HTML('./reports/takedowns_display_out.html').write_pdf('./reports/takedowns_display_out.pdf', stylesheets=[CSS(string=PAGE_SIZE)])
     client.files_upload(channels=user_id, inital_comment="Gabba Gool", file='./reports/takedowns_display_out.pdf')
 
 def cleanups_display(query, con, user_id, client):
     """Generates Cleanups Database PDF"""
     data_frame = pd.read_sql_query(query, con)
     to_html_pretty(data_frame, filename='./reports/cleanups_display_out.html', title='Cleanups Database')
-    pdfkit.from_file('./reports/cleanups_display_out.html','./reports/cleanups_display_out.pdf', options=options)
+    weasyprint.HTML('./reports/cleanups_display_out.html').write_pdf('./reports/cleanups_display_out.pdf', stylesheets=[CSS(string=PAGE_SIZE)])
     client.files_upload(channels=user_id, inital_comment="Gabba Gool", file='./reports/cleanups_display_out.pdf')
 
 def fines_display(query, con, user_id, client):
     """Generates Fines Database PDF"""
     data_frame = pd.read_sql_query(query, con)
     to_html_pretty(data_frame, filename='./reports/fines_display_out.html', title='Fines Database')
-    pdfkit.from_file('./reports/fines_display_out.html','./reports/fines_display_out.pdf', options=options)
+    weasyprint.HTML('./reports/fines_display_out.html').write_pdf('./reports/fines_display_out.pdf', stylesheets=[CSS(string=PAGE_SIZE)])
     client.files_upload(channels=user_id, inital_comment="Gabba Gool", file='./reports/fines_display_out.pdf')
 
 def reconcilliations_display(query, con, user_id, client):
     """Generates Reconcilliations Database PDF"""
     data_frame = pd.read_sql_query(query, con)
     to_html_pretty(data_frame, filename='./reports/reconcilliations_display_out.html', title='Reconcilliations Database')
-    pdfkit.from_file('./reports/reconcilliations_display_out.html','./reports/reconcilliations_display_out.pdf', options=options)
+    weasyprint.HTML('./reports/reconcilliations_display_out.html').write_pdf('./reports/reconcilliations_display_out.pdf', stylesheets=[CSS(string=PAGE_SIZE)])
     client.files_upload(channels=user_id, inital_comment="Gabba Gool", file='./reports/reconcilliations_display_out.pdf')
 
 def naughtylist_display(query, con, user_id, client):
     """Generates Naughty List Database PDF"""
     data_frame = pd.read_sql_query(query, con)
     to_html_pretty(data_frame, filename='./reports/naughty_display_out.html', title='Naughty Database')
-    pdfkit.from_file('./reports/naughty_display_out.html','./reports/naughty_display_out.pdf', options=options)
+    weasyprint.HTML('./reports/naughty_display_out.html').write_pdf('./reports/naughty_display_out.pdf', stylesheets=[CSS(string=PAGE_SIZE)])
     client.files_upload(channels=user_id, inital_comment="Gabba Gool", file='./reports/naughty_display_out.pdf')
 
 
@@ -115,4 +103,7 @@ HTML_TEMPLATE1 = '''
 HTML_TEMPLATE2 = '''
 </body>
 </html>
+'''
+PAGE_SIZE = '''
+@page { size: A1; margin: 1cm }
 '''
