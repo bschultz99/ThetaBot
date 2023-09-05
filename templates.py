@@ -675,16 +675,15 @@ HELP_MESSAGE = """Welcome to the ThetaBot. These are the following features:
 5. /generate-cleanup-database - ADMIN - Generate the cleanup database by adding the cleanups and setting default values to 0.
 6. /generate-cleanups - ADMIN - Generates the weekly cleanups.
 7. /generate-takedowns - ADMIN - Generates the weekly takedowns.
-8. /revert-takedowns - ADMIN - Reverts the weekly takedown generation.
-9. /display-takedowns - Display the takedown database.
-10. /display-cleanups - Display the cleanups database.
-11. /admin-form - ADMIN - Add admins to the system.
-12. /fines-form - ADMIN- Submit fines for members.
-13. /reconcilliation-form - ADMIN - Use to reconcille fines of members.
-14. /display-fines - Display the fines database.
-15. /display-reconcilliation - Display the reconcilliation Database.
-16. /display-naughtylist - Displays the fines, reconcilliations, and how much members owe.
-17. /end-semester - ADMIN - Restarts the semester.
+8. /display-takedowns - Display the takedown database.
+9. /display-cleanups - Display the cleanups database.
+10. /admin-form - ADMIN - Add admins to the system.
+11. /fines-form - ADMIN- Submit fines for members.
+12. /reconcilliation-form - ADMIN - Use to reconcille fines of members.
+13. /display-fines - Display the fines database.
+14. /display-reconcilliation - Display the reconcilliation Database.
+15. /display-naughtylist - Displays the fines, reconcilliations, and how much members owe.
+16. /end-semester - ADMIN - Restarts the semester.
 """
 
 FINE_MESSAGE= """ You have been fined!
