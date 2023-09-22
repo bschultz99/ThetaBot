@@ -133,7 +133,7 @@ USERS_DATABASE_UPDATE_TAKEDOWN = '''UPDATE takedowns SET
                                     thursday_lunch = "{}", thursday_dinner = "{}",
                                     friday_lunch = "{}", friday_dinner = "{}",
                                     membership = "{}" WHERE slack_id = "{}";'''
-USERS_DATABASE_INSERT_TAKEDOWN = '''INSERT INTO takedowns(monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner, membership, slack_id) VALUES("{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}");'''
+USERS_DATABASE_INSERT_TAKEDOWN = '''INSERT INTO takedowns(monday_lunch, monday_dinner, tuesday_lunch, tuesday_dinner, wednesday_lunch, wednesday_dinner, thursday_lunch, thursday_dinner, friday_lunch, friday_dinner, membership, slack_id, name) VALUES("{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}","{}");'''
 USERS_REMOVE_DELETE = '''
                         BEGIN;
                         DELETE FROM users WHERE slack_id = "{}";
@@ -143,7 +143,7 @@ USERS_REMOVE_DELETE = '''
                       '''
 USERS_DATABASE_SELECT_NAUGHTY = 'SELECT slack_id FROM naughty WHERE slack_id = "{}";'
 USERS_DATABASE_UPDATE_NAUGHTY = 'UPDATE naughty SET name = "{}" WHERE slack_id = "{}";'
-USERS_DATABASE_INSERT_NAUGHTY = ' INSERT INTO naughty(slack_id, name, fines, reconcilliation, owed) VALUES ("{}","{}",0,0,0);'
+USERS_DATABASE_INSERT_NAUGHTY = ' INSERT INTO naughty(slack_id, name, fines, reconcilliation) VALUES ("{}","{}",0,0);'
 #Cleanup Settings
 CLEANUPSETTINGS_ADD_SELECT = 'SELECT * FROM cleanup_settings WHERE cleanup_id = "{}";'
 CLEANUPSETTINGS_ADD_INSERT = 'INSERT INTO cleanup_settings(cleanup_id, deck_requirement, townsman_captain, minimum_inhouse, minimum_people) VALUES(?,?,?,?,?);'

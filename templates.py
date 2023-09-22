@@ -708,6 +708,7 @@ Please reach out to your Theta 1, {} if you have any issues.
 
 CLEANUP_MESSAGE= """Your cleanup for the week of {} is {}.
 Your captain is {}.
+Here is the <https://docs.google.com/spreadsheets/d/1wOXIcCWWcINbVCbbupweYKwris9yZluoLJAexGm1eVY/edit#gid=0|link> for cleanup assignments.
 If you are a townsman or new member please post in this channel what days you can do your cleanup.
 Please reach out to your Theta 3, {} if you have any issues.
 """

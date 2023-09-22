@@ -70,7 +70,7 @@ def add_user(con, user, takedowns):
     if cur.execute(USERS_DATABASE_SELECT_TAKEDOWN.format(user[0])).fetchall():
         cur.execute(USERS_DATABASE_UPDATE_TAKEDOWN.format(takedowns[0], takedowns[1], takedowns[2], takedowns[3], takedowns[4], takedowns[5], takedowns[6], takedowns[7], takedowns[8], takedowns[9], user[2], user[0]))
     else:
-        cur.execute(USERS_DATABASE_INSERT_TAKEDOWN.format(takedowns[0], takedowns[1], takedowns[2], takedowns[3], takedowns[4], takedowns[5], takedowns[6], takedowns[7], takedowns[8], takedowns[9], user[2], user[0]))
+        cur.execute(USERS_DATABASE_INSERT_TAKEDOWN.format(takedowns[0], takedowns[1], takedowns[2], takedowns[3], takedowns[4], takedowns[5], takedowns[6], takedowns[7], takedowns[8], takedowns[9], user[2], user[0], user[1]))
     #Update/ADD naughty Database
     if cur.execute(USERS_DATABASE_SELECT_NAUGHTY.format(user[0])).fetchall(): #If the user exists update user in the naughty table
         cur.execute(USERS_DATABASE_UPDATE_NAUGHTY.format(user[1], user[0])) #Update name based on slack_id

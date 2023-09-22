@@ -225,7 +225,13 @@ def interactions():
     if action == "actionId-usersubmit":
         slack_id = data["user"]["id"]
         input_keys = list(data["state"]["values"])
-        name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        try:
+            name = data["state"]["values"][input_keys[0]]["plain_text_input-action"]["value"]
+        except KeyError:
+            name = client.users_info(user=slack_id)['user']['real_name']
+        if name is None:
+            name = client.users_info(user=slack_id)['user']['real_name']
+        print(data["state"]["values"][input_keys[1]])
         membership = data["state"]["values"][input_keys[1]]["static_select-action"]["selected_option"]["text"]["text"]
         user = (slack_id, name, membership)
         days = data["state"]["values"][input_keys[2]]["takedowns-action"]["selected_options"]
